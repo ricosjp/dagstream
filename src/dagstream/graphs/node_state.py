@@ -22,7 +22,35 @@ class INodeState(metaclass=abc.ABCMeta):
         raise NotImplementedError()
 
 
-class NodeState(INodeState):
+class DagStreamNotReadyError(ValueError):
+    """Subclass of ValueError raises by INodeState if some attributes are accessed
+    unless nodes state is properly prepared.
+    """
+
+    pass
+
+
+class UnReadyNodeState(INodeState):
+    def __init__(self) -> None:
+        pass
+
+    @property
+    def n_predecessors(self) -> int:
+        raise DagStreamNotReadyError()
+
+    @property
+    def is_finished(self) -> bool:
+        raise DagStreamNotReadyError()
+
+    @property
+    def is_ready(self) -> bool:
+        raise DagStreamNotReadyError()
+
+    def forward(self) -> None:
+        raise DagStreamNotReadyError()
+
+
+class ReadyNodeState(INodeState):
     def __init__(self, n_predecessors: int) -> None:
         self._n_predecessors = n_predecessors
 

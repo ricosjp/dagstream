@@ -1,6 +1,5 @@
 import abc
 import pathlib
-
 from typing import Iterable
 
 from dagstream.graphs.functional_node import IFunctionalNode
@@ -24,7 +23,7 @@ class MermaidViewer(IViewer):
         with open(file_path, "w") as fw:
             fw.write(context)
 
-    def _generate(self, functions: Iterable[IFunctionalNode]) -> list[str]:
+    def _generate(self, functions: Iterable[IFunctionalNode]) -> str:
         context = ["stateDiagram"]
         name2id = {}
 

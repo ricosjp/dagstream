@@ -1,8 +1,9 @@
 from __future__ import annotations
-from typing import Union
 
 import abc
-from .node_state import INodeState, NodeState
+from typing import Callable, Union
+
+from .node_state import INodeState, ReadyNodeState, UnReadyNodeState
 
 
 class IFunctionalNode(metaclass=abc.ABCMeta):
@@ -49,13 +50,13 @@ class IFunctionalNode(metaclass=abc.ABCMeta):
 
 
 class FunctionalNode(IFunctionalNode):
-    def __init__(self, user_function: callable) -> None:
+    def __init__(self, user_function: Callable) -> None:
         self._user_function = user_function
         self._from: set[IFunctionalNode] = set()
         self._to: set[IFunctionalNode] = set()
         self._name = f"{user_function.__name__}"
 
-        self._state: NodeState = None
+        self._state: INodeState = UnReadyNodeState()
 
     @property
     def name(self) -> str:
@@ -71,11 +72,6 @@ class FunctionalNode(IFunctionalNode):
 
     @property
     def state(self) -> INodeState:
-        if self._state is None:
-            raise ValueError(
-                f"Functional Node: {self.name} is not prepared."
-                "prepare() must be called first."
-            )
         return self._state
 
     @property
@@ -83,7 +79,7 @@ class FunctionalNode(IFunctionalNode):
         return self._to
 
     def prepare(self) -> None:
-        self._state = NodeState(self.n_predecessors)
+        self._state = ReadyNodeState(self.n_predecessors)
 
     def precede(self, *functions: IFunctionalNode) -> None:
         for func in functions:
