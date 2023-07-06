@@ -1,5 +1,4 @@
 .venv
-.poetry.lock
 .python-version
 __pycache__
 .coverage
@@ -7,3 +6,4 @@ __pycache__
 .pytest_cache
 .venv
 *.pyc
+poetry.lock
