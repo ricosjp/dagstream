@@ -1,1 +1,9 @@
 .venv
+.poetry.lock
+.python-version
+__pycache__
+.coverage
+.mypy_cache
+.pytest_cache
+.venv
+*.pyc

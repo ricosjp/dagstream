@@ -1,5 +1,4 @@
-
-from dagstream.dagstream import DagStream
+from dagstream import DagStream
 
 
 class StreamExecutor:
@@ -8,4 +7,3 @@ class StreamExecutor:
 
     def run(self, n_cpus: int = 1) -> None:
         self._dag_stream.prepare()
-

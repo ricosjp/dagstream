@@ -1,22 +1,46 @@
 import dagstream
+from dagstream.viewers.viewer import MermaidViewer
 
 
 def funcA():
+    print("funcA")
     return None
 
+
 def funcB():
+    print("funcB")
+    return None
+
+
+def funcC():
+    print("funcC")
+    return None
+
+
+def funcD():
+    print("funcD")
+    return None
+
+
+def funcE():
+    print("funcE")
+    return None
+
+
+def funcF():
+    print("funcF")
     return None
 
 
 stream = dagstream.DagStream()
-A_val, B_val = stream.emplace(funcA, funcB)
+A, B, C, D, E, F = stream.emplace(funcA, funcB, funcC, funcD, funcE, funcF)
 
-A_val.precede(B_val)
+A.precede(B, C)
+E.succeed(B, C, D)
+D.succeed(C)
+F.succeed(E)
 
+viewer = MermaidViewer()
+import pathlib
 
-stream.prepare()
-
-while not stream.is_active:
-    for val in stream.get_ready():
-        print(val.name)
-        stream.done(val)
+stream.output(viewer, pathlib.Path("sample.md"))

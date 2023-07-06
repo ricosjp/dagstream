@@ -1,10 +1,11 @@
 from __future__ import annotations
+from typing import Union
 
 import abc
-import graphlib
+from .node_state import INodeState, NodeState
 
 
-class ICallableKnot(metaclass=abc.ABCMeta):
+class IFunctionalNode(metaclass=abc.ABCMeta):
     @property
     @abc.abstractmethod
     def name(self) -> str:
@@ -17,7 +18,7 @@ class ICallableKnot(metaclass=abc.ABCMeta):
 
     @property
     @abc.abstractmethod
-    def successors(self) -> set[ICallableKnot]:
+    def successors(self) -> set[IFunctionalNode]:
         raise NotImplementedError()
 
     @property
@@ -25,12 +26,17 @@ class ICallableKnot(metaclass=abc.ABCMeta):
     def n_predecessors(self) -> int:
         raise NotImplementedError()
 
+    @property
     @abc.abstractmethod
-    def precede(self, *functions: ICallableKnot) -> None:
+    def state(self) -> INodeState:
         raise NotImplementedError()
 
     @abc.abstractmethod
-    def succeed(self, *functions: ICallableKnot) -> None:
+    def precede(self, *functions: IFunctionalNode) -> None:
+        raise NotImplementedError()
+
+    @abc.abstractmethod
+    def succeed(self, *functions: IFunctionalNode) -> None:
         raise NotImplementedError()
 
     @abc.abstractmethod
@@ -42,14 +48,14 @@ class ICallableKnot(metaclass=abc.ABCMeta):
         raise NotImplementedError()
 
 
-class KnotFunction(ICallableKnot):
+class FunctionalNode(IFunctionalNode):
     def __init__(self, user_function: callable) -> None:
         self._user_function = user_function
-        self._from: set[ICallableKnot] = set()
-        self._to: set[ICallableKnot] = set()
-        self._name = f"{KnotFunction.__name__}:{id(self)}"
+        self._from: set[IFunctionalNode] = set()
+        self._to: set[IFunctionalNode] = set()
+        self._name = f"{user_function.__name__}"
 
-        self._n_predecessors: int = None
+        self._state: NodeState = None
 
     @property
     def name(self) -> str:
@@ -61,27 +67,32 @@ class KnotFunction(ICallableKnot):
 
     @property
     def n_predecessors(self) -> int:
-        return self._n_predecessors
+        return len(self._from)
 
     @property
-    def successors(self) -> set[ICallableKnot]:
+    def state(self) -> INodeState:
+        if self._state is None:
+            raise ValueError(
+                f"Functional Node: {self.name} is not prepared."
+                "prepare() must be called first."
+            )
+        return self._state
+
+    @property
+    def successors(self) -> set[IFunctionalNode]:
         return self._to
 
-    @property
-    def is_nested(self) -> bool:
-        return False
-
     def prepare(self) -> None:
-        self._n_predecessors = len(self._from)
+        self._state = NodeState(self.n_predecessors)
 
-    def precede(self, *functions: ICallableKnot) -> None:
+    def precede(self, *functions: IFunctionalNode) -> None:
         for func in functions:
             if func in self._to:
-                continue            
+                continue
             self._to.add(func)
             func.succeed(self)
 
-    def succeed(self, *functions: ICallableKnot) -> None:
+    def succeed(self, *functions: IFunctionalNode) -> None:
         for func in functions:
             if func in self._from:
                 continue
@@ -89,4 +100,4 @@ class KnotFunction(ICallableKnot):
             func.precede(self)
 
     def run(self, *args, **kwargs):
-        return self._user_function(args)
+        return self._user_function()
