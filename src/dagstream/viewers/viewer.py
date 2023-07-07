@@ -13,7 +13,8 @@ class IDrawer(metaclass=abc.ABCMeta):
 
 class MermaidDrawer(IDrawer):
     def __init__(self) -> None:
-        pass
+        self._spliter = "\n" + " " * 4
+        self._dir = "LR"
 
     def output(
         self, graph: IDrawableGraph, file_path: pathlib.Path
@@ -23,8 +24,8 @@ class MermaidDrawer(IDrawer):
             fw.write(context)
 
     def _generate(self, graph: IDrawableGraph) -> str:
-        context = ["stateDiagram"]
-        name2id = {}
+        context = ["stateDiagram", f"direction {self._dir}"]
+        name2id: dict[str, str] = {}
 
         nodes = graph.get_drawable_nodes()
         for i, node in enumerate(nodes):
@@ -48,5 +49,4 @@ class MermaidDrawer(IDrawer):
                 successor_state = name2id[successor.name]
                 context.append(f"{state_name} --> {successor_state}")
 
-        spliter = "\n" + " " * 4
-        return spliter.join(context)
+        return self._spliter.join(context)
