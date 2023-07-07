@@ -1,8 +1,8 @@
 from typing import Callable, Iterable, Optional
 
 from dagstream.graph_components import FunctionalDag, IDrawableGraph
-from dagstream.graph_components.nodes import (
-    FunctionalNode, IDrawableNode, IFunctionalNode)
+from dagstream.graph_components.nodes import (FunctionalNode, IDrawableNode,
+                                              IFunctionalNode)
 
 
 class DagStream(IDrawableGraph):

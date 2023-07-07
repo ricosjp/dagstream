@@ -1,3 +1,2 @@
-from .dagstream import DagStream
-
-__version__ = "0.1.0"
+from dagstream.dagstream import DagStream
+from dagstream.version import __version__
