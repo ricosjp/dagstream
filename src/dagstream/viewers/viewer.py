@@ -2,36 +2,38 @@ import abc
 import pathlib
 from typing import Iterable
 
-from dagstream.graphs.functional_node import IFunctionalNode
+from dagstream.graphs.interface import IDrawableGraph
+from dagstream.graphs.nodes import IDrawableNode
 
 
-class IViewer(metaclass=abc.ABCMeta):
+class IDrawer(metaclass=abc.ABCMeta):
     def output(
-        self, functions: Iterable[IFunctionalNode], file_path: pathlib.Path
+        self, functions: Iterable[IDrawableNode], file_path: pathlib.Path
     ) -> None:
         raise NotImplementedError()
 
 
-class MermaidViewer(IViewer):
+class MermaidDrawer(IDrawer):
     def __init__(self) -> None:
         pass
 
     def output(
-        self, functions: Iterable[IFunctionalNode], file_path: pathlib.Path
+        self, graph: IDrawableGraph, file_path: pathlib.Path
     ) -> None:
-        context = self._generate(functions)
+        context = self._generate(graph)
         with open(file_path, "w") as fw:
             fw.write(context)
 
-    def _generate(self, functions: Iterable[IFunctionalNode]) -> str:
+    def _generate(self, graph: IDrawableGraph) -> str:
         context = ["stateDiagram"]
         name2id = {}
 
-        for i, node in enumerate(functions):
+        nodes = graph.get_drawable_nodes()
+        for i, node in enumerate(nodes):
             name2id[node.name] = (state_name := f"state_{i}")
             context.append(f'state "{node.name}" as {state_name}')
 
-        for i, node in enumerate(functions):
+        for i, node in enumerate(nodes):
             state_name = name2id[node.name]
             if node.n_predecessors == 0:
                 context.append(f"[*] --> {state_name}")

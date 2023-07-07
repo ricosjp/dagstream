@@ -1,11 +1,13 @@
 import pathlib
 from typing import Iterable, Union
 
-from dagstream.graphs.functional_node import IFunctionalNode
-from dagstream.viewers import IViewer
+from dagstream.viewers import IDrawer
+
+from .nodes import IFunctionalNode, IDrawableNode
+from .interface import IDrawableGraph
 
 
-class DagFunctionalGraph:
+class DagFunctionalGraph(IDrawableGraph):
     def __init__(self, nodes: set[IFunctionalNode]) -> None:
         self.nodes = nodes
         self._n_finished: int = 0
@@ -21,8 +23,8 @@ class DagFunctionalGraph:
 
         return self._n_finished < self._n_functions
 
-    def output(self, viewer: IViewer, file_path: pathlib.Path) -> None:
-        viewer.output(self.nodes, file_path=file_path)
+    def get_drawable_nodes(self) -> Iterable[IDrawableNode]:
+        return self.nodes
 
     def get_ready(self) -> tuple[IFunctionalNode, ...]:
         result = tuple(self._ready_nodes)

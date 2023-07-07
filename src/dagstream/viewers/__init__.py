@@ -1,1 +1,1 @@
-from .viewer import IViewer, MermaidViewer  # NOQA
+from .viewer import IDrawer, MermaidDrawer  # NOQA

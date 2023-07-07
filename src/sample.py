@@ -1,5 +1,5 @@
 import dagstream
-from dagstream.viewers.viewer import MermaidViewer
+from dagstream.viewers.viewer import MermaidDrawer
 
 
 def funcA():
@@ -40,7 +40,7 @@ E.succeed(B, C, D)
 D.succeed(C)
 F.succeed(E)
 
-viewer = MermaidViewer()
+viewer = MermaidDrawer()
 import pathlib
 
-stream.output(viewer, pathlib.Path("sample.md"))
+viewer.output(stream, file_path=pathlib.Path("outputs/sample.md"))

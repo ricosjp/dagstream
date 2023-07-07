@@ -1,1 +1,2 @@
-from .dagstream import DagStream, IFunctionalNode  # NOQA
+from .dagstream import DagStream  # NOQA
+from .interface import IDrawableGraph  # NOQA

@@ -1,14 +1,16 @@
-import pathlib
 from typing import Callable, Iterable
 
-from dagstream.graphs.functional_dag import DagFunctionalGraph
-from dagstream.graphs.functional_node import FunctionalNode, IFunctionalNode
-from dagstream.viewers import IViewer
+from .functional_dag import DagFunctionalGraph
+from .interface import IDrawableGraph
+from .nodes import FunctionalNode, IDrawableNode, IFunctionalNode
 
 
-class DagStream:
+class DagStream(IDrawableGraph):
     def __init__(self) -> None:
         self._functions: set[IFunctionalNode] = set()
+
+    def get_drawable_nodes(self) -> Iterable[IDrawableNode]:
+        return self._functions
 
     def get_functions(self) -> set[IFunctionalNode]:
         return self._functions
@@ -18,9 +20,6 @@ class DagStream:
         for func in knot_functions:
             self._functions.add(func)
         return knot_functions
-
-    def output(self, viewer: IViewer, file_path: pathlib.Path) -> None:
-        viewer.output(self._functions, file_path=file_path)
 
     def construct(self) -> DagFunctionalGraph:
         self._detect_cycle()
