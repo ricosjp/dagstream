@@ -1,10 +1,14 @@
-from dagstream import DagStream
+
+from dagstream.graph_components import FunctionalDag
 
 
 class StreamExecutor:
-    def __init__(self, dag_stream: DagStream) -> None:
-        self._dag_stream = dag_stream
-
-    def run(self, n_cpus: int = 1) -> None:
-        # self._dag_stream.prepare()
+    def __init__(self) -> None:
         ...
+
+    def run(sel, functional_dag: FunctionalDag) -> None:
+        while functional_dag.is_active:
+            nodes = functional_dag.get_ready()
+            for node in nodes:
+                node.run()
+                functional_dag.done(node)

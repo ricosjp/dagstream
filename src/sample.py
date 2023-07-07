@@ -1,5 +1,6 @@
 import dagstream
 from dagstream.viewers.viewer import MermaidDrawer
+from dagstream.executor import StreamExecutor
 
 
 def funcA():
@@ -40,7 +41,12 @@ E.succeed(B, C, D)
 D.succeed(C)
 F.succeed(E)
 
+executor = StreamExecutor()
+
 viewer = MermaidDrawer()
 import pathlib
 
-viewer.output(stream, file_path=pathlib.Path("outputs/sample.md"))
+graph = stream.construct(mandatory_nodes={D})
+
+executor.run(graph)
+viewer.output(graph, file_path=pathlib.Path("outputs/sample.md"))

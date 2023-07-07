@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import abc
-from typing import Callable, Union
 
 from .node_state import INodeState
 
@@ -23,7 +22,7 @@ class IDrawableNode(metaclass=abc.ABCMeta):
         raise NotImplementedError()
 
 
-class IFunctionalNode(metaclass=abc.ABCMeta):
+class IFunctionalNode(IDrawableNode, metaclass=abc.ABCMeta):
     @property
     @abc.abstractmethod
     def name(self) -> str:
@@ -32,6 +31,11 @@ class IFunctionalNode(metaclass=abc.ABCMeta):
     @name.setter
     @abc.abstractmethod
     def name(self) -> None:
+        raise NotImplementedError()
+
+    @property
+    @abc.abstractmethod
+    def predecessors(self) -> set[IFunctionalNode]:
         raise NotImplementedError()
 
     @property

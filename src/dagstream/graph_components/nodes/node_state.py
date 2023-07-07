@@ -26,7 +26,6 @@ class DagStreamNotReadyError(ValueError):
     """Subclass of ValueError raises by INodeState if some attributes are accessed
     unless nodes state is properly prepared.
     """
-
     pass
 
 

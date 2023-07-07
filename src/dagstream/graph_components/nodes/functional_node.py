@@ -1,3 +1,4 @@
+from __future__ import annotations
 from typing import Callable
 
 from .interface import IFunctionalNode, IDrawableNode
@@ -10,8 +11,10 @@ class FunctionalNode(IFunctionalNode, IDrawableNode):
         self._from: set[IFunctionalNode] = set()
         self._to: set[IFunctionalNode] = set()
         self._name = f"{user_function.__name__}"
-
         self._state: INodeState = UnReadyNodeState()
+
+    def __repr__(self) -> str:
+        return f"{FunctionalNode.__name__}:{self.name}"
 
     @property
     def name(self) -> str:
@@ -28,6 +31,10 @@ class FunctionalNode(IFunctionalNode, IDrawableNode):
     @property
     def state(self) -> INodeState:
         return self._state
+
+    @property
+    def predecessors(self) -> set[IFunctionalNode]:
+        return self._from
 
     @property
     def successors(self) -> set[IFunctionalNode]:

@@ -1,14 +1,12 @@
 import abc
 import pathlib
-from typing import Iterable
 
-from dagstream.graphs.interface import IDrawableGraph
-from dagstream.graphs.nodes import IDrawableNode
+from dagstream.graph_components import IDrawableGraph
 
 
 class IDrawer(metaclass=abc.ABCMeta):
     def output(
-        self, functions: Iterable[IDrawableNode], file_path: pathlib.Path
+        self, graph: IDrawableGraph, file_path: pathlib.Path
     ) -> None:
         raise NotImplementedError()
 
@@ -38,11 +36,15 @@ class MermaidDrawer(IDrawer):
             if node.n_predecessors == 0:
                 context.append(f"[*] --> {state_name}")
 
-            if len(node.successors) == 0:
+            succesors = [
+                v for v in node.successors 
+                if graph.is_exist_node(v)
+            ]
+            if len(succesors) == 0:
                 context.append(f"{state_name} --> [*]")
                 continue
 
-            for successor in node.successors:
+            for successor in succesors:
                 successor_state = name2id[successor.name]
                 context.append(f"{state_name} --> {successor_state}")
 

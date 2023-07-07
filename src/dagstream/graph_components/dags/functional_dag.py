@@ -1,13 +1,10 @@
-import pathlib
-from typing import Iterable, Union
+from typing import Iterable
 
-from dagstream.viewers import IDrawer
-
-from .nodes import IFunctionalNode, IDrawableNode
+from dagstream.graph_components.nodes import IDrawableNode, IFunctionalNode
 from .interface import IDrawableGraph
 
 
-class DagFunctionalGraph(IDrawableGraph):
+class FunctionalDag(IDrawableGraph):
     def __init__(self, nodes: set[IFunctionalNode]) -> None:
         self.nodes = nodes
         self._n_finished: int = 0
@@ -23,6 +20,9 @@ class DagFunctionalGraph(IDrawableGraph):
 
         return self._n_finished < self._n_functions
 
+    def is_exist_node(self, node: IFunctionalNode) -> bool:
+        return node in self.nodes
+
     def get_drawable_nodes(self) -> Iterable[IDrawableNode]:
         return self.nodes
 
@@ -35,6 +35,11 @@ class DagFunctionalGraph(IDrawableGraph):
         for node in finished_nodes:
             self._n_finished += 1
             for successor in node.successors:
+                if successor not in self.nodes:
+                    # If it is sub dag graph, it is possible
+                    # that successor does not exists
+                    continue
+
                 successor.state.forward()
                 if successor.state.is_ready:
                     self._ready_nodes.append(successor)
