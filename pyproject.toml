@@ -3,9 +3,10 @@ name = "dagstream"
 version = "0.1.0"
 description = ""
 authors = ["sakamoto <sakamoto@ricos.co.jp>"]
+license = "Apache-2.0"
 classifiers = [
     "Programming Language :: Python :: 3",
-    "License :: OSI Approved :: MIT License",
+    "License :: OSI Approved :: Apache License",
     "Operating System :: OS Independent",
 ]
 packages = [
@@ -22,6 +23,7 @@ flake8 = "^6.0.0"
 isort = "^5.12.0"
 mypy = "^1.4.1"
 pytest-cov = "^4.1.0"
+Sphinx = "^7.0.1"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

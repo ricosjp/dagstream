@@ -1,3 +1,5 @@
+RUN = poetry run
+
 .PHONY: black-check
 black-check:
 	poetry run black --check src tests
@@ -52,3 +54,8 @@ lint:
 test-all:
 	$(MAKE) lint
 	$(MAKE) test
+
+
+.PHONY: document
+document:
+	$(RUN) sphinx-build docs/source public/
