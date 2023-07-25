@@ -1,5 +1,6 @@
 stages:
   - test
+  - deploy
 
 default:
   image: python:3.9-slim
@@ -27,3 +28,17 @@ pytest:
   tags:
     - cpu-ge-16
     - GenuineIntel
+
+
+document:
+  stage: deploy
+  script:
+    - make document
+  artifacts:
+    paths:
+      - public
+  only:
+    - main
+    - develop
+    - fix_sphinx
+    

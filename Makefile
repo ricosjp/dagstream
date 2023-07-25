@@ -58,4 +58,6 @@ test-all:
 
 .PHONY: document
 document:
+	rm -rf docs/source/reference/generated || true
+	$(RUN) sphinx-apidoc -f -o docs/source/reference/generated src/dagstream
 	$(RUN) sphinx-build docs/source public/
