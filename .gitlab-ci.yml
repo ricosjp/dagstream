@@ -5,6 +5,7 @@ stages:
 default:
   image: python:3.9-slim
   before_script:
+    - apt update
     - apt install -y make
     - pip install poetry
     - poetry config virtualenvs.in-project false
