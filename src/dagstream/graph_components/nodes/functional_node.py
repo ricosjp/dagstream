@@ -1,5 +1,6 @@
 from __future__ import annotations
 from typing import Callable
+import types
 
 from .interface import IFunctionalNode, IDrawableNode
 from .node_state import INodeState, ReadyNodeState, UnReadyNodeState
@@ -10,8 +11,14 @@ class FunctionalNode(IFunctionalNode, IDrawableNode):
         self._user_function = user_function
         self._from: set[IFunctionalNode] = set()
         self._to: set[IFunctionalNode] = set()
-        self._name = f"{user_function.__name__}"
+        self._name = self._get_name(user_function)
         self._state: INodeState = UnReadyNodeState()
+
+    def _get_name(self, user_function: Callable) -> str:
+        if isinstance(user_function, types.FunctionType):
+            return user_function.__name__
+        
+        return user_function.__class__.__name__
 
     def __repr__(self) -> str:
         return f"{FunctionalNode.__name__}:{self.name}"
