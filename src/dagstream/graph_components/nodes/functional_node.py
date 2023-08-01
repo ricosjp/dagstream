@@ -65,4 +65,4 @@ class FunctionalNode(IFunctionalNode, IDrawableNode):
             func.precede(self)
 
     def run(self, *args, **kwargs):
-        return self._user_function()
+        return self._user_function(*args, **kwargs)

@@ -67,5 +67,5 @@ class IFunctionalNode(IDrawableNode, metaclass=abc.ABCMeta):
         raise NotImplementedError()
 
     @abc.abstractmethod
-    def run(self) -> Any:
+    def run(self, *args, **kwargs) -> Any:
         raise NotImplementedError()
