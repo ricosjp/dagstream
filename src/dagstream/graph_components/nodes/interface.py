@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import abc
+from typing import Any
 
 from .node_state import INodeState
 
@@ -66,5 +67,5 @@ class IFunctionalNode(IDrawableNode, metaclass=abc.ABCMeta):
         raise NotImplementedError()
 
     @abc.abstractmethod
-    def run(self) -> None:
+    def run(self) -> Any:
         raise NotImplementedError()

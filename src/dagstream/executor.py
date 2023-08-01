@@ -10,5 +10,5 @@ class StreamExecutor:
         while self._dag.is_active:
             nodes = self._dag.get_ready()
             for node in nodes:
-                node.run()
+                node.run(*args, **kwargs)
                 self._dag.done(node)
