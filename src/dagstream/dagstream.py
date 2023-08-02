@@ -3,13 +3,14 @@ from typing import Callable, Iterable, Optional
 from dagstream.graph_components import FunctionalDag, IDrawableGraph
 from dagstream.graph_components.nodes import (FunctionalNode, IDrawableNode,
                                               IFunctionalNode)
+from dagstream.utils.errors import DagStreamCycleError
 
 
 class DagStream(IDrawableGraph):
     def __init__(self) -> None:
         self._functions: set[IFunctionalNode] = set()
 
-    def is_exist_node(self, node: IFunctionalNode) -> bool:
+    def check_exists(self, node: IFunctionalNode) -> bool:
         return node in self._functions
 
     def get_drawable_nodes(self) -> Iterable[IDrawableNode]:
@@ -19,10 +20,8 @@ class DagStream(IDrawableGraph):
         return self._functions
 
     def emplace(self, *functions: Callable) -> tuple[FunctionalNode, ...]:
-        knot_functions = tuple([FunctionalNode(func) for func in functions])
-        for func in knot_functions:
-            self._functions.add(func)
-        return knot_functions
+        self._functions = {FunctionalNode(func) for func in functions}
+        return tuple(self._functions)
 
     def construct(self, mandatory_nodes: Optional[set[IFunctionalNode]] = None) -> FunctionalDag:
         self._detect_cycle()
@@ -32,9 +31,6 @@ class DagStream(IDrawableGraph):
         else:
             functions = self._extract_functions(mandatory_nodes)
 
-        for func in functions:
-            func.prepare()
-        # TODO: Add extract feature
         return FunctionalDag(functions)
 
     def _extract_functions(self, mandatory_nodes: set[IFunctionalNode]) -> set[IFunctionalNode]:
@@ -82,13 +78,11 @@ class DagStream(IDrawableGraph):
                 continue
 
             if (node in seen) and (node not in finished):
-                raise DagStreamCycleError()
+                raise DagStreamCycleError(
+                    "Detect cycle in your definition of dag."
+                )
 
             seen.add(node)
             self._dfs_detect_cycle(node, finished, seen)
 
         finished.add(start)
-
-
-class DagStreamCycleError(ValueError):
-    pass

@@ -1,8 +1,9 @@
 from __future__ import annotations
-from typing import Callable
-import types
 
-from .interface import IFunctionalNode, IDrawableNode
+import types
+from typing import Callable
+
+from .interface import IDrawableNode, IFunctionalNode
 from .node_state import INodeState, ReadyNodeState, UnReadyNodeState
 
 

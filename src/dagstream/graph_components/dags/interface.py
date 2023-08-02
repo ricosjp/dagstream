@@ -10,5 +10,5 @@ class IDrawableGraph(metaclass=abc.ABCMeta):
         raise NotImplementedError()
 
     @abc.abstractmethod
-    def is_exist_node(self, node: IFunctionalNode) -> bool:
+    def check_exists(self, node: IFunctionalNode) -> bool:
         raise NotImplementedError()

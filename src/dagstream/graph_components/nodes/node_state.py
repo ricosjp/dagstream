@@ -1,5 +1,7 @@
 import abc
 
+from dagstream.utils.errors import DagStreamNotReadyError
+
 
 class INodeState(metaclass=abc.ABCMeta):
     @property
@@ -22,13 +24,6 @@ class INodeState(metaclass=abc.ABCMeta):
         raise NotImplementedError()
 
 
-class DagStreamNotReadyError(ValueError):
-    """Subclass of ValueError raises by INodeState if some attributes are accessed
-    unless nodes state is properly prepared.
-    """
-    pass
-
-
 class UnReadyNodeState(INodeState):
     def __init__(self) -> None:
         pass
@@ -43,7 +38,7 @@ class UnReadyNodeState(INodeState):
 
     @property
     def is_ready(self) -> bool:
-        raise DagStreamNotReadyError()
+        return False
 
     def forward(self) -> None:
         raise DagStreamNotReadyError()

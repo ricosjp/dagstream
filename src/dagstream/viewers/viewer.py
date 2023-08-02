@@ -39,7 +39,7 @@ class MermaidDrawer(IDrawer):
 
             succesors = [
                 v for v in node.successors 
-                if graph.is_exist_node(v)
+                if graph.check_exists(v)
             ]
             if len(succesors) == 0:
                 context.append(f"{state_name} --> [*]")
