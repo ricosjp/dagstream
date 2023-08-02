@@ -23,7 +23,6 @@ pytest:
   stage: test
   script:
     - poetry run pytest tests --cov=src --cov-report term-missing
-    - poetry run python3 -m coverage report
     - poetry run python3 -m coverage html -d coverage
     - poetry run python3 -m coverage xml
   coverage: '/(?i)total.*? (100(?:\.0+)?\%|[1-9]?\d(?:\.\d+)?\%)$/'
