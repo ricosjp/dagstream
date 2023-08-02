@@ -1,4 +1,5 @@
 from unittest import mock
+
 import pytest
 
 from dagstream import DagStream
@@ -141,28 +142,28 @@ def test__is_exist_node_when_extracting_functions(
         (
             {"A": ["B", "C"], "B": ["E"], "C": ["E", "D"], "D": ["E"], "E": ["F"]},
             ["A"],
-            ["A"]
+            ["A"],
         ),
         (
             {"A": ["B", "C"], "B": ["E"], "C": ["E", "D"], "D": ["E"], "E": ["F"]},
             ["A", "C"],
-            ["A", "C"]
+            ["A", "C"],
         ),
         (
             {"A": ["B", "C"], "B": ["E"], "C": ["E", "D"], "D": ["E"], "E": ["F"]},
             ["E"],
-            ["A", "B", "C", "D", "E"]
+            ["A", "B", "C", "D", "E"],
         ),
         (
             {"A": ["B", "C"], "B": ["E"], "C": ["E", "D"], "D": ["E"], "E": ["F"]},
             ["D"],
-            ["A", "C", "D"]
+            ["A", "C", "D"],
         ),
         (
             {"A": ["B", "C"], "B": ["E"], "C": ["E", "D"], "D": ["E"], "E": ["F"]},
             ["F"],
-            ["A", "B", "C", "D", "E", "F"]
-        )
+            ["A", "B", "C", "D", "E", "F"],
+        ),
     ],
 )
 def test__is_subdag_graph_when_extracting(
@@ -180,4 +181,3 @@ def test__is_subdag_graph_when_extracting(
 
     for node in dag.nodes:
         assert node.name in contain_nodes
-

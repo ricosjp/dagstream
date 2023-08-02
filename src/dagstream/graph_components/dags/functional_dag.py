@@ -16,7 +16,7 @@ class FunctionalDag(IDrawableGraph):
             node for node in self.nodes if node.state.is_ready
         ]
 
-    def _prepare(self) -> bool:
+    def _prepare(self) -> None:
         for node in self.nodes:
             node.prepare()
 
@@ -40,7 +40,7 @@ class FunctionalDag(IDrawableGraph):
             self._n_finished += 1
             for successor in node.successors:
                 if successor not in self.nodes:
-                    # If it is last node, 
+                    # If it is last node,
                     # successor does not exists
                     continue
 

@@ -18,7 +18,7 @@ class FunctionalNode(IFunctionalNode, IDrawableNode):
     def _get_name(self, user_function: Callable) -> str:
         if isinstance(user_function, types.FunctionType):
             return user_function.__name__
-        
+
         return user_function.__class__.__name__
 
     def __repr__(self) -> str:

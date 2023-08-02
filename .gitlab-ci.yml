@@ -11,6 +11,14 @@ default:
     - poetry config virtualenvs.in-project false
     - poetry install
 
+
+lint:
+  stage: test
+  script:
+    - make lint
+  tags:
+    - no-gpu
+
 pytest:
   stage: test
   script:

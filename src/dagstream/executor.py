@@ -1,4 +1,3 @@
-
 from dagstream.graph_components import FunctionalDag
 
 

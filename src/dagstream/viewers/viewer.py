@@ -5,9 +5,7 @@ from dagstream.graph_components import IDrawableGraph
 
 
 class IDrawer(metaclass=abc.ABCMeta):
-    def output(
-        self, graph: IDrawableGraph, file_path: pathlib.Path
-    ) -> None:
+    def output(self, graph: IDrawableGraph, file_path: pathlib.Path) -> None:
         raise NotImplementedError()
 
 
@@ -16,9 +14,7 @@ class MermaidDrawer(IDrawer):
         self._spliter = "\n" + " " * 4
         self._dir = "LR"
 
-    def output(
-        self, graph: IDrawableGraph, file_path: pathlib.Path
-    ) -> None:
+    def output(self, graph: IDrawableGraph, file_path: pathlib.Path) -> None:
         context = self._generate(graph)
         with open(file_path, "w") as fw:
             fw.write(context)
@@ -37,10 +33,7 @@ class MermaidDrawer(IDrawer):
             if node.n_predecessors == 0:
                 context.append(f"[*] --> {state_name}")
 
-            succesors = [
-                v for v in node.successors 
-                if graph.check_exists(v)
-            ]
+            succesors = [v for v in node.successors if graph.check_exists(v)]
             if len(succesors) == 0:
                 context.append(f"{state_name} --> [*]")
                 continue

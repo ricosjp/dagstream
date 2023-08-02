@@ -1,4 +1,5 @@
 from unittest import mock
+
 import pytest
 
 from dagstream.graph_components import FunctionalDag
@@ -7,9 +8,14 @@ from dagstream.graph_components.nodes import FunctionalNode
 
 @pytest.fixture
 def create_functional_nodes() -> list[FunctionalNode]:
-    def sample1(): pass
-    def sample2(): pass
-    def sample3(): pass
+    def sample1():
+        pass
+
+    def sample2():
+        pass
+
+    def sample3():
+        pass
 
     node1 = FunctionalNode(sample1)
     node2 = FunctionalNode(sample2)
@@ -29,7 +35,7 @@ def create_functional_nodes() -> list[FunctionalNode]:
 
 def test__initialized(create_functional_nodes):
     with mock.patch.object(FunctionalNode, "prepare") as mocked:
-        dag = FunctionalDag(create_functional_nodes)
+        _ = FunctionalDag(create_functional_nodes)
 
         assert mocked.call_count == len(create_functional_nodes)
 
@@ -66,11 +72,12 @@ def test__get_ready_nodes(create_functional_nodes: list[FunctionalNode]):
 
 
 def test__n_finished_when_done():
-    def sample(): pass
+    def sample():
+        pass
+
     dag = FunctionalDag([FunctionalNode(sample)])
 
-    node, = dag.get_ready()
+    (node,) = dag.get_ready()
 
     dag.done(node)
     assert dag._n_finished == 1
-

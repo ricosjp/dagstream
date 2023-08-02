@@ -1,8 +1,11 @@
 from typing import Callable, Iterable, Optional
 
 from dagstream.graph_components import FunctionalDag, IDrawableGraph
-from dagstream.graph_components.nodes import (FunctionalNode, IDrawableNode,
-                                              IFunctionalNode)
+from dagstream.graph_components.nodes import (
+    FunctionalNode,
+    IDrawableNode,
+    IFunctionalNode,
+)
 from dagstream.utils.errors import DagStreamCycleError
 
 
@@ -19,11 +22,13 @@ class DagStream(IDrawableGraph):
     def get_functions(self) -> set[IFunctionalNode]:
         return self._functions
 
-    def emplace(self, *functions: Callable) -> tuple[FunctionalNode, ...]:
+    def emplace(self, *functions: Callable) -> tuple[IFunctionalNode, ...]:
         self._functions = {FunctionalNode(func) for func in functions}
         return tuple(self._functions)
 
-    def construct(self, mandatory_nodes: Optional[set[IFunctionalNode]] = None) -> FunctionalDag:
+    def construct(
+        self, mandatory_nodes: Optional[set[IFunctionalNode]] = None
+    ) -> FunctionalDag:
         self._detect_cycle()
 
         if mandatory_nodes is None:
@@ -33,14 +38,18 @@ class DagStream(IDrawableGraph):
 
         return FunctionalDag(functions)
 
-    def _extract_functions(self, mandatory_nodes: set[IFunctionalNode]) -> set[IFunctionalNode]:
+    def _extract_functions(
+        self, mandatory_nodes: set[IFunctionalNode]
+    ) -> set[IFunctionalNode]:
         visited: set[IFunctionalNode] = set()
-        
+
         for node in mandatory_nodes:
             self._extract_subdag(node, visited)
         return visited
 
-    def _extract_subdag(self, mandatory_node: IFunctionalNode, visited: set[IFunctionalNode]):
+    def _extract_subdag(
+        self, mandatory_node: IFunctionalNode, visited: set[IFunctionalNode]
+    ):
         if mandatory_node in visited:
             return
 
@@ -78,9 +87,7 @@ class DagStream(IDrawableGraph):
                 continue
 
             if (node in seen) and (node not in finished):
-                raise DagStreamCycleError(
-                    "Detect cycle in your definition of dag."
-                )
+                raise DagStreamCycleError("Detect cycle in your definition of dag.")
 
             seen.add(node)
             self._dfs_detect_cycle(node, finished, seen)

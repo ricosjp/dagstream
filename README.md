@@ -2,13 +2,11 @@
 
 DagStream is the Python package in order to manage relationship between functions, especially for data-preprocessing functions for machine learning applications. It offers simple API like [taskflow](https://github.com/taskflow/taskflow).
 
-
 ## Basic Concepts
 
 ### Definition of Dag
 
 DagStream class convert your functions into dag nodes.
-
 
 ```python
 import dagstream
@@ -42,8 +40,6 @@ F.succeed(E)
 
 ```
 
-
 Relationship between functions are like below.
 
 ![](images/sample_func.png)
-

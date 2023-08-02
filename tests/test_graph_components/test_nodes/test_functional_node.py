@@ -2,13 +2,13 @@ from unittest import mock
 
 import pytest
 
-from dagstream.graph_components.nodes import FunctionalNode
-from dagstream.graph_components.nodes import node_state
+from dagstream.graph_components.nodes import FunctionalNode, node_state
 
 
 def test__get_function_name():
     def sample():
         pass
+
     node = FunctionalNode(sample)
     assert node.name == "sample"
 
@@ -28,14 +28,19 @@ def test__get_callable_class_name():
 def test__change_function_name():
     def sample():
         pass
+
     node = FunctionalNode(sample)
     node.name = "sample2"
     assert node.name == "sample2"
 
 
 def test__call_succeed_when_precede():
-    def sample1(): pass
-    def sample2(): pass
+    def sample1():
+        pass
+
+    def sample2():
+        pass
+
     node1 = FunctionalNode(sample1)
     node2 = FunctionalNode(sample2)
 
@@ -45,8 +50,12 @@ def test__call_succeed_when_precede():
 
 
 def test__call_precede_when_succeed():
-    def sample1(): pass
-    def sample2(): pass
+    def sample1():
+        pass
+
+    def sample2():
+        pass
+
     node1 = FunctionalNode(sample1)
     node2 = FunctionalNode(sample2)
 
@@ -57,9 +66,14 @@ def test__call_precede_when_succeed():
 
 @pytest.fixture
 def create_nodes_relationship():
-    def sample1(): pass
-    def sample2(): pass
-    def sample3(): pass
+    def sample1():
+        pass
+
+    def sample2():
+        pass
+
+    def sample3():
+        pass
 
     node1 = FunctionalNode(sample1)
     node2 = FunctionalNode(sample2)
@@ -77,7 +91,9 @@ def create_nodes_relationship():
     return node1, node2, node3
 
 
-def test__precede_succeed_relationship(create_nodes_relationship: tuple[FunctionalNode, ...]):
+def test__precede_succeed_relationship(
+    create_nodes_relationship: tuple[FunctionalNode, ...]
+):
     node1, node2, node3 = create_nodes_relationship
 
     assert node1.n_predecessors == 0
@@ -90,7 +106,9 @@ def test__precede_succeed_relationship(create_nodes_relationship: tuple[Function
 
 
 def test_prepare():
-    def sample1(): pass
+    def sample1():
+        pass
+
     node1 = FunctionalNode(sample1)
     assert isinstance(node1.state, node_state.UnReadyNodeState)
 
