@@ -39,7 +39,7 @@ pytest:
     - GenuineIntel
 
 
-document:
+pages:
   stage: deploy
   script:
     - make document

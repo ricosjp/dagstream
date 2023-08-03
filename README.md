@@ -2,6 +2,12 @@
 
 DagStream is the Python package in order to manage relationship between functions, especially for data-preprocessing functions for machine learning applications. It offers simple API like [taskflow](https://github.com/taskflow/taskflow).
 
+
+## User manual
+
+- https://ricos.lld.jp/machine_learning/dagstream
+
+
 ## Basic Concepts
 
 ### Definition of Dag
@@ -42,4 +48,24 @@ F.succeed(E)
 
 Relationship between functions are like below.
 
-![](images/sample_func.png)
+```mermaid
+
+stateDiagram
+    direction LR
+    state "funcC" as state_0
+    state "funcB" as state_1
+    state "funcD" as state_2
+    state "funcA" as state_3
+    state "funcF" as state_4
+    state "funcE" as state_5
+    [*] --> state_0
+    state_0 --> state_1
+    state_0 --> state_2
+    state_1 --> state_4
+    state_2 --> state_3
+    state_2 --> state_4
+    state_3 --> state_4
+    state_4 --> state_5
+    state_5 --> [*]
+
+```
