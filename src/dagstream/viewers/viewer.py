@@ -15,6 +15,15 @@ class MermaidDrawer(IDrawer):
         self._dir = "LR"
 
     def output(self, graph: IDrawableGraph, file_path: pathlib.Path) -> None:
+        """output content to file_path
+
+        Parameters
+        ----------
+        graph : IDrawableGraph
+            graph object to draw
+        file_path : pathlib.Path
+            path to file
+        """
         context = self._generate(graph)
         with open(file_path, "w") as fw:
             fw.write(context)

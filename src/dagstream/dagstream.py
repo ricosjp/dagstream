@@ -23,12 +23,34 @@ class DagStream(IDrawableGraph):
         return self._functions
 
     def emplace(self, *functions: Callable) -> tuple[IFunctionalNode, ...]:
+        """create a functional node corresponding to each function
+
+        Returns
+        -------
+        tuple[IFunctionalNode, ...]
+            functional node corresponding to each function
+        """
         self._functions = {FunctionalNode(func) for func in functions}
         return tuple(self._functions)
 
     def construct(
         self, mandatory_nodes: Optional[set[IFunctionalNode]] = None
     ) -> FunctionalDag:
+        """create functional dag
+
+        Solving dependencies and create dag structure composed of functional nodes
+
+        Parameters
+        ----------
+        mandatory_nodes : Optional[set[IFunctionalNode]], optional
+            If fed, extract sub 'minimum' graph to include mandatory_nodes.
+            If not fed, all functional graph is consider. by default None
+
+        Returns
+        -------
+        FunctionalDag
+            dag structure object composed of functional nodes
+        """
         self._detect_cycle()
 
         if mandatory_nodes is None:

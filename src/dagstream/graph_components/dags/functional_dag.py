@@ -22,9 +22,28 @@ class FunctionalDag(IDrawableGraph):
 
     @property
     def is_active(self) -> bool:
+        """Check whether unfinished functions exist or not
+
+        Returns
+        -------
+        bool
+            True if not finished functions exist
+        """
         return self._n_finished < self._n_functions
 
     def check_exists(self, node: IFunctionalNode) -> bool:
+        """Chech whether node exists in this functional dag.
+
+        Parameters
+        ----------
+        node : IFunctionalNode
+            functional node to search
+
+        Returns
+        -------
+        bool
+            True if node exists in this functional dag.
+        """
         return node in self.nodes
 
     def get_drawable_nodes(self) -> Iterable[IDrawableNode]:
@@ -36,6 +55,14 @@ class FunctionalDag(IDrawableGraph):
         return result
 
     def done(self, *finished_nodes: IFunctionalNode) -> None:
+        """Register nodes as finished and update state
+
+        Parameters
+        ----------
+        *finished_nodes : IFunctionalNode
+            finished nodes
+
+        """
         for node in finished_nodes:
             self._n_finished += 1
             for successor in node.successors:
