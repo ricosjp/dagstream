@@ -30,8 +30,11 @@ class DagStream(IDrawableGraph):
         tuple[IFunctionalNode, ...]
             functional node corresponding to each function
         """
-        self._functions = {FunctionalNode(func) for func in functions}
-        return tuple(self._functions)
+
+        # To ensure orders
+        _functions = [FunctionalNode(func) for func in functions]
+        self._functions = set(_functions)
+        return tuple(_functions)
 
     def construct(
         self, mandatory_nodes: Optional[set[IFunctionalNode]] = None

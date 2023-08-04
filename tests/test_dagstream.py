@@ -17,10 +17,18 @@ def test__emplace():
     def sample3():
         pass
 
+    def sample4():
+        pass
+
     stream = DagStream()
-    nodes = stream.emplace(sample1, sample2, sample3)
-    assert len(nodes) == 3
+    nodes = stream.emplace(sample1, sample2, sample3, sample4)
+    assert len(nodes) == 4
     assert isinstance(nodes, tuple)
+
+    assert nodes[0].name == "sample1"
+    assert nodes[1].name == "sample2"
+    assert nodes[2].name == "sample3"
+    assert nodes[3].name == "sample4"
 
 
 @pytest.fixture
