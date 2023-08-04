@@ -1,17 +1,17 @@
 stateDiagram
     direction LR
-    state "funcC" as state_0
-    state "funcB" as state_1
-    state "funcD" as state_2
-    state "funcA" as state_3
-    state "funcF" as state_4
-    state "funcE" as state_5
-    [*] --> state_0
-    state_0 --> state_1
+    state "funcB" as state_0
+    state "funcF" as state_1
+    state "funcE" as state_2
+    state "funcC" as state_3
+    state "funcD" as state_4
+    state "funcA" as state_5
     state_0 --> state_2
-    state_1 --> state_4
-    state_2 --> state_3
-    state_2 --> state_4
+    state_1 --> [*]
+    state_2 --> state_1
+    state_3 --> state_2
     state_3 --> state_4
-    state_4 --> state_5
-    state_5 --> [*]
+    state_4 --> state_2
+    [*] --> state_5
+    state_5 --> state_3
+    state_5 --> state_0

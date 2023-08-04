@@ -46,11 +46,12 @@ DagStream class convert your functions into dag nodes.
 
 
    stream = dagstream.DagStream()
-   # convert to dagflow object
+   # convert to functional nodes
    A, B, C, D, E, F = stream.emplace(funcA, funcB, funcC, funcD, funcE, funcF)
 
-   A.precede(B, C)
-   E.succeed(B, C, D)
+   # define relationship betweeen functional nodes
+   A.precede(B, C)  # A executes before B and C
+   E.succeed(B, C, D)  # E executes after B, C and D
    D.succeed(C)
    F.succeed(E)
 
@@ -70,9 +71,10 @@ the Apache License, Version 2.0 (the "License")
 
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
    :caption: Contents
 
+   examples
    reference/index.rst
 
 

@@ -1,0 +1,12 @@
+stateDiagram
+    direction LR
+    state "funcC" as state_0
+    state "funcD" as state_1
+    state "funcB" as state_2
+    state "funcA" as state_3
+    state_0 --> state_1
+    state_1 --> [*]
+    state_2 --> [*]
+    [*] --> state_3
+    state_3 --> state_0
+    state_3 --> state_2
