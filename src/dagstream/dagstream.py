@@ -32,8 +32,11 @@ class DagStream(IDrawableGraph):
         """
 
         # To ensure orders
-        _functions = [FunctionalNode(func) for func in functions]
-        self._functions = set(_functions)
+        _functions: list[IFunctionalNode] = []
+        for func in functions:
+            node = FunctionalNode(func)
+            _functions.append(node)
+            self._functions.add(node)
         return tuple(_functions)
 
     def construct(
