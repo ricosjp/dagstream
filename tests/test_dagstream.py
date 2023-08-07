@@ -191,7 +191,9 @@ def test__is_subdag_graph_when_extracting(
         assert node.name in contain_nodes
 
 
-def test__emplate_multiple_times(setup_dagstream: tuple[DagStream, dict[str, FunctionalNode]]):
+def test__emplate_multiple_times(
+    setup_dagstream: tuple[DagStream, dict[str, FunctionalNode]]
+):
     stream, _ = setup_dagstream
     n_functions = len(stream._functions)
 
