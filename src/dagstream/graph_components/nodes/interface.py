@@ -49,11 +49,6 @@ class IFunctionalNode(IDrawableNode, metaclass=abc.ABCMeta):
     def n_predecessors(self) -> int:
         raise NotImplementedError()
 
-    @property
-    @abc.abstractmethod
-    def state(self) -> INodeState:
-        raise NotImplementedError()
-
     @abc.abstractmethod
     def precede(self, *functions: IFunctionalNode) -> None:
         raise NotImplementedError()
@@ -63,7 +58,7 @@ class IFunctionalNode(IDrawableNode, metaclass=abc.ABCMeta):
         raise NotImplementedError()
 
     @abc.abstractmethod
-    def prepare(self) -> None:
+    def prepare(self) -> INodeState:
         raise NotImplementedError()
 
     @abc.abstractmethod

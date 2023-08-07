@@ -4,7 +4,7 @@ import types
 from typing import Callable
 
 from .interface import IDrawableNode, IFunctionalNode
-from .node_state import INodeState, ReadyNodeState, UnReadyNodeState
+from .node_state import ReadyNodeState
 
 
 class FunctionalNode(IFunctionalNode, IDrawableNode):
@@ -13,7 +13,6 @@ class FunctionalNode(IFunctionalNode, IDrawableNode):
         self._from: set[IFunctionalNode] = set()
         self._to: set[IFunctionalNode] = set()
         self._name = self._get_name(user_function)
-        self._state: INodeState = UnReadyNodeState()
 
     def _get_name(self, user_function: Callable) -> str:
         if isinstance(user_function, types.FunctionType):
@@ -37,10 +36,6 @@ class FunctionalNode(IFunctionalNode, IDrawableNode):
         return len(self._from)
 
     @property
-    def state(self) -> INodeState:
-        return self._state
-
-    @property
     def predecessors(self) -> set[IFunctionalNode]:
         return self._from
 
@@ -48,8 +43,8 @@ class FunctionalNode(IFunctionalNode, IDrawableNode):
     def successors(self) -> set[IFunctionalNode]:
         return self._to
 
-    def prepare(self) -> None:
-        self._state = ReadyNodeState(self.n_predecessors)
+    def prepare(self) -> ReadyNodeState:
+        return ReadyNodeState(self.n_predecessors)
 
     def precede(self, *functions: IFunctionalNode) -> None:
         for func in functions:

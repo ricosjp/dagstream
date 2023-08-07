@@ -110,7 +110,5 @@ def test_prepare():
         pass
 
     node1 = FunctionalNode(sample1)
-    assert isinstance(node1.state, node_state.UnReadyNodeState)
-
-    node1.prepare()
-    assert isinstance(node1.state, node_state.ReadyNodeState)
+    state = node1.prepare()
+    assert isinstance(state, node_state.ReadyNodeState)

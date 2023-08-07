@@ -185,7 +185,7 @@ def test__is_subdag_graph_when_extracting(
     setup_nodes_relationship(relationship, name2node)
     dag = stream.construct(nodes)
 
-    assert len(dag.nodes) == len(contain_nodes)
+    assert len(dag._nodes) == len(contain_nodes)
 
-    for node in dag.nodes:
+    for node in dag._nodes:
         assert node.name in contain_nodes
