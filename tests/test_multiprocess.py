@@ -35,9 +35,7 @@ def run_dagstream(results: list[int], *, stream: DagStream):
 
 def test__multiprocessing():
     stream = DagStream()
-    node1, node2, node3, node4 = stream.emplace(
-        sample1, sample2, sample3, sample4
-    )
+    node1, node2, node3, node4 = stream.emplace(sample1, sample2, sample3, sample4)
 
     node1.precede(node2)
     node3.precede(node2)
@@ -64,9 +62,7 @@ def test__multiprocessing():
 
 def test__do_not_affect_other_functional_dag_state():
     stream = DagStream()
-    node1, node2, node3, node4 = stream.emplace(
-        sample1, sample2, sample3, sample4
-    )
+    node1, node2, node3, node4 = stream.emplace(sample1, sample2, sample3, sample4)
 
     node1.precede(node2, node3)
     node3.succeed(node2)

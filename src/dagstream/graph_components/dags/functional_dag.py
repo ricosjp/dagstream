@@ -1,7 +1,6 @@
 from typing import Iterable
 
-from dagstream.graph_components.nodes import IDrawableNode, IFunctionalNode
-from dagstream.graph_components.nodes import INodeState
+from dagstream.graph_components.nodes import IDrawableNode, IFunctionalNode, INodeState
 
 from .interface import IDrawableGraph
 
@@ -12,8 +11,9 @@ class FunctionalDag(IDrawableGraph):
         self._n_finished: int = 0
         self._n_functions: int = len(self._nodes)
 
-        self._name2state: dict[IFunctionalNode, INodeState] \
-            = {node: node.prepare() for node in self._nodes}
+        self._name2state: dict[IFunctionalNode, INodeState] = {
+            node: node.prepare() for node in self._nodes
+        }
         self._ready_nodes: list[IFunctionalNode] = [
             node for node in self._nodes if self._name2state[node].is_ready
         ]
