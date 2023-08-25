@@ -50,7 +50,7 @@ class DagStream(IDrawableGraph):
         ----------
         mandatory_nodes : Optional[set[IFunctionalNode]], optional
             If fed, extract sub 'minimum' graph to include mandatory_nodes.
-            If not fed, all functional graph is consider. by default None
+            If not fed, all functional nodes are included to graph. by default None
 
         Returns
         -------

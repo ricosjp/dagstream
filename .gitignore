@@ -82,3 +82,6 @@ venv.bak/
 .dmypy.json
 dmypy.json
 
+
+# python-version
+.python-version
