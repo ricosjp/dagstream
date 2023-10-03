@@ -1,6 +1,6 @@
 # DagStream
 
-DagStream is the Python package in order to manage relationship between functions, especially for data-preprocessing functions for machine learning applications. It offers simple API like [taskflow](https://github.com/taskflow/taskflow).
+DagStream is the Python package in order to manage relationship between functions, especially for data-preprocessing functions for machine learning applications. It offers simple API similar to [taskflow](https://github.com/taskflow/taskflow).
 
 ## User manual
 

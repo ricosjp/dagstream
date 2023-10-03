@@ -4,11 +4,7 @@ version = "0.1.0"
 description = ""
 authors = ["sakamoto <sakamoto@ricos.co.jp>"]
 license = "Apache-2.0"
-classifiers = [
-    "Programming Language :: Python :: 3",
-    "License :: OSI Approved :: Apache License",
-    "Operating System :: OS Independent",
-]
+classifiers = []
 packages = [
     {include = "dagstream", from = "src"}
 ]
