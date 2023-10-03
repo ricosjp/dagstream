@@ -50,41 +50,32 @@ pages:
     - develop
     - fix_sphinx
 
-.deploy:wheel:ricos:
+
+.deploy:wheel:
   stage: deploy
   script:
     - poetry version $VERSION
     - poetry config repositories.ricos https://pypi.ritc.jp
     - poetry build -f wheel
     - poetry publish --username ricos --password ${RICOS_PYPI_KEY} -r ricos --no-ansi -n -v
-  retry: 2
-
-.deploy:wheel:public:
-  stage: deploy
-  script:
-    - poetry version $VERSION
-    - poetry build -f wheel
     - poetry publish --username __token__ --password ${PYPI_ORG_TOKEN} --no-ansi -n -v
   retry: 2
 
 
-deploy:wheel:develop:
-  extends: .deploy:wheel:ricos
-  before_script:
-    - export VERSION=$(poetry version -s).dev$(date +"%Y%m%d%H%M")
-  only:
-    - develop
-
 deploy:wheel:main:
-  extends: .deploy:wheel:public
+  image: python:3.9-slim
+  extends: .deploy:wheel
   before_script:
+    - pip install poetry
     - export VERSION=$(poetry version -s).dev$(date +"%Y%m%d%H%M")
   only:
     - main
 
 deploy:wheel:tags:
-  extends: .deploy:wheel:public
+  image: python:3.9-slim
+  extends: .deploy:wheel
   before_script:
+    - pip install poetry
     - export VERSION=$CI_COMMIT_REF_NAME
   only:
     - tags
