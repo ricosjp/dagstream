@@ -6,27 +6,44 @@ on:
       - main
 
 jobs:
-  docs:
+  build_docs:
     runs-on: ubuntu-latest
     container:
         image: python:3.9-slim
     steps:
-      - name: Checkout
+      - name: checkout
         uses: actions/checkout@v1
       
-      - name: Setup
+      - name: setup
         shell: bash
         run: |
-        apt update -y
-        apt install -y make
-        pip install poetry
-        poetry config virtualenvs.in-project false
-        poetry install
+          apt update -y
+          apt install -y make git
+          pip install poetry
+          poetry config virtualenvs.in-project false
+          poetry install
 
-      - name: docs
+      - name: build_pages
         shell: bash
         run: |
           make document
+
+      - name: upload_artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: html_pages
+          path: public/ # or path/to/artifact
+
+  deploy_docs:
+    runs-on: ubuntu-latest
+    needs: build_docs
+    steps:
+
+      - name: download_artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: html_pages
+          path: public/
 
       - name: deploy_pages
         uses: peaceiris/actions-gh-pages@v3
