@@ -57,19 +57,9 @@ pages:
     - poetry version $VERSION
     - poetry config repositories.ricos https://pypi.ritc.jp
     - poetry build -f wheel
-    - poetry publish --username ricos --password ${RICOS_PYPI_KEY} -r ricos --no-ansi -n -v
-    - poetry publish --username __token__ --password ${PYPI_PUBLISH_TOKEN} --no-ansi -n -v
-  retry: 2
+    - poetry publish --username ricos --password $RICOS_PYPI_KEY -r ricos --no-ansi -n -v
+    - poetry publish --username __token__ --password $PYPI_PUBLISH_TOKEN --no-ansi -n -v
 
-
-deploy:wheel:main:
-  image: python:3.9-slim
-  extends: .deploy:wheel
-  before_script:
-    - pip install poetry
-    - export VERSION=$(poetry version -s).dev$(date +"%Y%m%d%H%M")
-  only:
-    - main
 
 deploy:wheel:tags:
   image: python:3.9-slim
