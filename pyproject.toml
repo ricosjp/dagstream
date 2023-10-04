@@ -5,9 +5,13 @@ description = ""
 authors = ["sakamoto <sakamoto@ricos.co.jp>"]
 license = "Apache-2.0"
 classifiers = []
+readme = "README.md"
+repository = "https://github.com/ricosjp/dagstream"
+documentation = "https://ricosjp.github.io/dagstream/"
 packages = [
     {include = "dagstream", from = "src"}
 ]
+include = ["pyproject.toml"]
 
 [tool.poetry.dependencies]
 python = "^3.9"

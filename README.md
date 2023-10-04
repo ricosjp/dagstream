@@ -6,7 +6,6 @@ For more details, please refer to docs below.
 
 - [User Manual](https://ricosjp.github.io/dagstream/)
 
-
 ## How to install
 
 You can intall dagstream by using pip.
@@ -68,7 +67,7 @@ executor.run()
 
 In console, follwing items are shown.
 
-``` 
+```
 funcA
 funcC
 funcB
@@ -80,7 +79,6 @@ funcF
 ### Draw relationship of functions using Mermaid
 
 You can draw function dag relationship by using [Mermaid](https://mermaid.js.org/).
-
 
 ```python
 from dagstream.viewers import MermaidDrawer
