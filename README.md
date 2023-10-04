@@ -2,11 +2,20 @@
 
 DagStream is the Python package in order to manage relationship between functions, especially for data-preprocessing functions for machine learning applications. It offers simple API similar to [taskflow](https://github.com/taskflow/taskflow).
 
-## User manual
+For more details, please refer to docs below.
 
-- https://ricos.lld.jp/machine_learning/dagstream
+- [User Manual](https://ricosjp.github.io/dagstream/)
 
-## Basic Concepts
+
+## How to install
+
+You can intall dagstream by using pip.
+
+```
+pip install dagstream
+```
+
+## Basic Usage
 
 ### Definition of Dag
 
@@ -44,7 +53,44 @@ F.succeed(E)
 
 ```
 
-Relationship between functions are like below.
+### Execute whole dag functions
+
+dagstream execute the functions based on relationship you defined.
+
+```python
+from dagstream.executes import StreamExecutor
+
+# construct functional dag
+functional_dag = stream.construct()
+executor = StreamExecutor(functional_dag)
+executor.run()
+```
+
+In console, follwing items are shown.
+
+``` 
+funcA
+funcC
+funcB
+funcD
+funcE
+funcF
+```
+
+### Draw relationship of functions using Mermaid
+
+You can draw function dag relationship by using [Mermaid](https://mermaid.js.org/).
+
+
+```python
+from dagstream.viewers import MermaidDrawer
+
+functional_dag = stream.construct()
+drawer.output(functional_dag, "path/to/output.mmd")
+
+```
+
+The output is shown like below.
 
 ```mermaid
 
