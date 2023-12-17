@@ -1,6 +1,7 @@
 import multiprocessing as multi
 from typing import Any
 
+from dagstream.dagstream import IFunctionalNode
 from dagstream.graph_components import FunctionalDag
 
 
@@ -50,7 +51,7 @@ class StreamParallelExecutor:
     """Parallel Executor for FunctionalDag Object."""
 
     def __init__(self, functional_dag: FunctionalDag, n_processes: int = 1) -> None:
-        """Parallel Executor for FunctionalDag Object.
+        """THIS IS EXPERIMENTAL FEATURE. Parallel Executor for FunctionalDag Object.
 
         Parameters
         ----------
@@ -96,6 +97,9 @@ class StreamParallelExecutor:
         all_processes: list[multi.Process] = []
 
         results: dict[str, Any] = {}
+        _name2nodes: dict[str, IFunctionalNode] = {
+            node.name: node for node in self._dag._nodes
+        }
 
         while self._dag.is_active:
             nodes = self._dag.get_ready()
@@ -114,8 +118,14 @@ class StreamParallelExecutor:
 
             while not done_queue.empty():
                 _done_node, _result = done_queue.get()
-                self._dag.done(_done_node)
-                results.update({_done_node.name: _result})
+
+                # HACK: When using multiprocessing, id(IFunctionalNode)
+                # after running is not the same as one before running.
+                # This operation is incorporated in the Dagstream object,
+                # after names of all nodes are guranteed to be unique.
+                done_node = _name2nodes[_done_node.name]
+                self._dag.done(done_node)
+                results.update({done_node.name: _result})
 
             if not self._dag.is_active:
                 for _ in range(self._n_processes):

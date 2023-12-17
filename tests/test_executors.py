@@ -22,6 +22,10 @@ def funcD():
     time.sleep(1)
 
 
+def funcE():
+    time.sleep(1)
+
+
 def test__parallel_run_is_faster_than_single_run():
     stream_parallel = DagStream()
     # All nodes can be run in parallel
@@ -42,6 +46,18 @@ def test__parallel_run_is_faster_than_single_run():
 
     # about 4 times faster than sequetial execution
     assert abs(elapsed_time - elapsed_time_parallel * 4) < 1.0
+
+
+def test__can_run_in_parallel_with_orders():
+    stream = DagStream()
+    A, B, C, D, E = stream.emplace(funcA, funcB, funcC, funcD, funcE)
+
+    A.precede(B, C)
+    E.succeed(B, C, D)
+    D.succeed(C)
+
+    executor = StreamParallelExecutor(stream.construct(), n_processes=4)
+    executor.run()
 
 
 # endregion
