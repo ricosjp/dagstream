@@ -69,6 +69,20 @@ In console, following items are shown.
     funcF
 
 
+When executing all functions in parallel, Use StreamParallelExecutor.
+
+
+.. code:: python
+   
+    from dagstream.executes import StreamParallelExecutor
+
+    # construct functional dag
+    functional_dag = stream.construct()
+    # Run in parallel by using 4 processes
+    executor = StreamParallelExecutor(functional_dag, n_processes=4)
+    executor.run()
+
+
 Draw mermaid object
 ^^^^^^^^^^^^^^^^^^^
 
@@ -124,3 +138,4 @@ In console, following items are shown.
 Drawing by mermaid, sub-dag graph is shown below.
 
 .. mermaid:: mmds/extract.mmd
+
