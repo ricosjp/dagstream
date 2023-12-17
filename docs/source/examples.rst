@@ -50,12 +50,13 @@ After definition of relationship between functional nodes, execute all.
 
 .. code:: python
    
-    from dagstream.executes import StreamExecutor
+   from dagstream.executor import StreamExecutor
 
-    # construct functional dag
-    functional_dag = stream.construct()
-    executor = StreamExecutor(functional_dag)
-    executor.run()
+   # construct functional dag
+   functional_dag = stream.construct()
+   executor = StreamExecutor(functional_dag)
+   executor.run()
+
 
 In console, following items are shown.
 
@@ -67,6 +68,20 @@ In console, following items are shown.
     funcD
     funcE
     funcF
+
+
+When executing all functions in parallel, Use StreamParallelExecutor.
+
+
+.. code:: python
+
+   from dagstream.executor import StreamParallelExecutor
+
+   # construct functional dag
+   functional_dag = stream.construct()
+   # Run in parallel by using 4 processes
+   executor = StreamParallelExecutor(functional_dag, n_processes=4)
+   executor.run()
 
 
 Draw mermaid object
@@ -124,3 +139,4 @@ In console, following items are shown.
 Drawing by mermaid, sub-dag graph is shown below.
 
 .. mermaid:: mmds/extract.mmd
+
