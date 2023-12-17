@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "dagstream"
-version = "0.1.2"
+version = "0.1.3"
 description = ""
 authors = ["sakamoto <sakamoto@ricos.co.jp>"]
 license = "Apache-2.0"
