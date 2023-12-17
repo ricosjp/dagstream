@@ -47,9 +47,7 @@ class StreamExecutor:
 
 
 class StreamParallelExecutor:
-    """Parallel Executor for FunctionalDag Object.
-
-    """
+    """Parallel Executor for FunctionalDag Object."""
 
     def __init__(self, functional_dag: FunctionalDag, n_processes: int = 1) -> None:
         """Parallel Executor for FunctionalDag Object.
@@ -93,8 +91,8 @@ class StreamParallelExecutor:
         dict[str, Any]
             Key is name of function, value is returned objects from each function.
         """
-        task_queue = multi.Queue()
-        done_queue = multi.Queue()
+        task_queue: multi.Queue = multi.Queue()
+        done_queue: multi.Queue = multi.Queue()
         all_processes: list[multi.Process] = []
 
         results: dict[str, Any] = {}
@@ -110,7 +108,8 @@ class StreamParallelExecutor:
             for _ in range(n_left_process):
                 process = multi.Process(
                     target=self._worker, args=(task_queue, done_queue)
-                ).start()
+                )
+                process.start()
                 all_processes.append(process)
 
             while not done_queue.empty():

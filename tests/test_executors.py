@@ -43,4 +43,5 @@ def test__parallel_run_is_faster_than_single_run():
     # about 4 times faster than sequetial execution
     assert abs(elapsed_time - elapsed_time_parallel * 4) < 1.0
 
+
 # endregion
