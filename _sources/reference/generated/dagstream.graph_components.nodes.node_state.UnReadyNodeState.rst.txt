@@ -1,0 +1,31 @@
+﻿dagstream.graph\_components.nodes.node\_state.UnReadyNodeState
+==============================================================
+
+.. currentmodule:: dagstream.graph_components.nodes.node_state
+
+.. autoclass:: UnReadyNodeState
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~UnReadyNodeState.__init__
+      ~UnReadyNodeState.forward
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~UnReadyNodeState.is_finished
+      ~UnReadyNodeState.is_ready
+      ~UnReadyNodeState.n_predecessors
+   
+   
