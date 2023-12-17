@@ -57,7 +57,7 @@ F.succeed(E)
 dagstream execute the functions based on relationship you defined.
 
 ```python
-from dagstream.executes import StreamExecutor
+from dagstream.executor import StreamExecutor
 
 # construct functional dag
 functional_dag = stream.construct()
@@ -94,20 +94,19 @@ The output is shown like below.
 
 stateDiagram
     direction LR
-    state "funcC" as state_0
+    state "funcE" as state_0
     state "funcB" as state_1
-    state "funcD" as state_2
-    state "funcA" as state_3
-    state "funcF" as state_4
-    state "funcE" as state_5
-    [*] --> state_0
-    state_0 --> state_1
+    state "funcF" as state_2
+    state "funcD" as state_3
+    state "funcC" as state_4
+    state "funcA" as state_5
     state_0 --> state_2
-    state_1 --> state_4
-    state_2 --> state_3
-    state_2 --> state_4
-    state_3 --> state_4
-    state_4 --> state_5
-    state_5 --> [*]
-
+    state_1 --> state_0
+    state_2 --> [*]
+    state_3 --> state_0
+    state_4 --> state_0
+    state_4 --> state_3
+    [*] --> state_5
+    state_5 --> state_4
+    state_5 --> state_1
 ```
