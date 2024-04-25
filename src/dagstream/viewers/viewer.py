@@ -34,11 +34,11 @@ class MermaidDrawer(IDrawer):
 
         nodes = graph.get_drawable_nodes()
         for i, node in enumerate(nodes):
-            name2id[node.name] = (state_name := f"state_{i}")
-            context.append(f'state "{node.name}" as {state_name}')
+            name2id[node.display_name] = (state_name := f"state_{i}")
+            context.append(f'state "{node.display_name}" as {state_name}')
 
         for i, node in enumerate(nodes):
-            state_name = name2id[node.name]
+            state_name = name2id[node.display_name]
             if node.n_predecessors == 0:
                 context.append(f"[*] --> {state_name}")
 
@@ -48,7 +48,7 @@ class MermaidDrawer(IDrawer):
                 continue
 
             for successor in succesors:
-                successor_state = name2id[successor.name]
+                successor_state = name2id[successor.display_name]
                 context.append(f"{state_name} --> {successor_state}")
 
         return self._spliter.join(context)

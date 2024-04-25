@@ -1,26 +1,27 @@
 from typing import Callable, Iterable, Optional
 
-from dagstream.graph_components import FunctionalDag, IDrawableGraph
-from dagstream.graph_components.nodes import (
-    FunctionalNode,
+from dagstream.graph_components import (
+    FunctionalDag,
+    IDrawableGraph,
     IDrawableNode,
     IFunctionalNode,
 )
+from dagstream.graph_components.nodes import FunctionalNode
 from dagstream.utils.errors import DagStreamCycleError
 
 
 class DagStream(IDrawableGraph):
     def __init__(self) -> None:
-        self._functions: set[IFunctionalNode] = set()
+        self._name2node: dict[str, IFunctionalNode] = {}
 
     def check_exists(self, node: IFunctionalNode) -> bool:
-        return node in self._functions
+        return node.mut_name in self._name2node
 
     def get_drawable_nodes(self) -> Iterable[IDrawableNode]:
-        return self._functions
+        return self._name2node.values()
 
     def get_functions(self) -> set[IFunctionalNode]:
-        return self._functions
+        return self._name2node.values()
 
     def emplace(self, *functions: Callable) -> tuple[IFunctionalNode, ...]:
         """create a functional node corresponding to each function
@@ -32,12 +33,13 @@ class DagStream(IDrawableGraph):
         """
 
         # To ensure orders
-        _functions: list[IFunctionalNode] = []
+        _functions: dict[str, IFunctionalNode] = {}
         for func in functions:
             node = FunctionalNode(func)
-            _functions.append(node)
-            self._functions.add(node)
-        return tuple(_functions)
+            _functions.update({node.mut_name: node})
+        
+        self._name2node |= _functions
+        return tuple(_functions.values())
 
     def construct(
         self, mandatory_nodes: Optional[set[IFunctionalNode]] = None
@@ -60,7 +62,7 @@ class DagStream(IDrawableGraph):
         self._detect_cycle()
 
         if mandatory_nodes is None:
-            functions = self._functions
+            functions = self._name2node
         else:
             functions = self._extract_functions(mandatory_nodes)
 
@@ -68,27 +70,28 @@ class DagStream(IDrawableGraph):
 
     def _extract_functions(
         self, mandatory_nodes: set[IFunctionalNode]
-    ) -> set[IFunctionalNode]:
-        visited: set[IFunctionalNode] = set()
+    ) -> dict[str, IFunctionalNode]:
+        visited: dict[str, IFunctionalNode] = {}
 
         for node in mandatory_nodes:
             self._extract_subdag(node, visited)
         return visited
 
     def _extract_subdag(
-        self, mandatory_node: IFunctionalNode, visited: set[IFunctionalNode]
+        self, mandatory_node: IFunctionalNode, visited: dict[str, IFunctionalNode]
     ):
-        if mandatory_node in visited:
+        if mandatory_node.mut_name in visited:
             return
 
-        visited.add(mandatory_node)
-        predecessors: list[IFunctionalNode] = [v for v in mandatory_node.predecessors]
+        visited.update({mandatory_node.mut_name: mandatory_node})
+        predecessors: list[str] = [v for v in mandatory_node.predecessors]
 
         while len(predecessors) != 0:
-            node = predecessors.pop()
+            node_name = predecessors.pop()
+            node = self._name2node[node_name]
             if node in visited:
                 continue
-            visited.add(node)
+            visited.update({node.mut_name: node})
 
             for next_node in node.predecessors:
                 predecessors.append(next_node)
@@ -98,10 +101,10 @@ class DagStream(IDrawableGraph):
     def _detect_cycle(self):
         finished = set()
         seen = set()
-        for func in self._functions:
-            if func in finished:
+        for node in self._name2node.values():
+            if node in finished:
                 continue
-            self._dfs_detect_cycle(func, finished, seen)
+            self._dfs_detect_cycle(node, finished, seen)
         return None
 
     def _dfs_detect_cycle(
@@ -110,7 +113,9 @@ class DagStream(IDrawableGraph):
         finished: set[IFunctionalNode],
         seen: set[IFunctionalNode],
     ) -> None:
-        for node in start.successors:
+        for edge in start.successors:
+            node = self._name2node[edge.to_node]
+
             if node in finished:
                 continue
 

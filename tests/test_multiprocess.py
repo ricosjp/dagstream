@@ -71,11 +71,11 @@ def test__do_not_affect_other_functional_dag_state():
     dag1 = stream.construct()
 
     nodes = dag1.get_ready()
-    dag1.done(*nodes)
+    dag1.done(*[n.mut_name for n in nodes])
 
     dag2 = stream.construct()
     nodes = dag2.get_ready()
-    assert nodes[0].name == "sample1"
+    assert nodes[0].display_name == "sample1"
 
     nodes1_2 = dag1.get_ready()
-    assert nodes1_2[0].name == "sample2"
+    assert nodes1_2[0].display_name == "sample2"

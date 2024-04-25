@@ -25,10 +25,10 @@ def test__emplace():
     assert len(nodes) == 4
     assert isinstance(nodes, tuple)
 
-    assert nodes[0].name == "sample1"
-    assert nodes[1].name == "sample2"
-    assert nodes[2].name == "sample3"
-    assert nodes[3].name == "sample4"
+    assert nodes[0].display_name == "sample1"
+    assert nodes[1].display_name == "sample2"
+    assert nodes[2].display_name == "sample3"
+    assert nodes[3].display_name == "sample4"
 
 
 @pytest.fixture
@@ -54,7 +54,7 @@ def setup_dagstream():
     stream = DagStream()
     nodes = stream.emplace(A, B, C, D, E, F)
 
-    name2node = {v.name: v for v in nodes}
+    name2node = {v.display_name: v for v in nodes}
     return stream, name2node
 
 
@@ -185,20 +185,55 @@ def test__is_subdag_graph_when_extracting(
     setup_nodes_relationship(relationship, name2node)
     dag = stream.construct(nodes)
 
-    assert len(dag._nodes) == len(contain_nodes)
+    assert len(dag._name2nodes) == len(contain_nodes)
 
-    for node in dag._nodes:
-        assert node.name in contain_nodes
+    for node in dag._name2nodes.values():
+        assert node.display_name in contain_nodes
 
 
 def test__emplate_multiple_times(
     setup_dagstream: tuple[DagStream, dict[str, FunctionalNode]]
 ):
     stream, _ = setup_dagstream
-    n_functions = len(stream._functions)
+    n_functions = len(stream._name2node)
 
     def sample6():
         pass
 
     _ = stream.emplace(sample6)
-    assert len(stream._functions) == n_functions + 1
+    assert len(stream._name2node) == n_functions + 1
+
+
+# region dagstream with pipe
+
+@pytest.fixture
+def setup_dagstream():
+    def A():
+        return [1, 2]
+
+    def B(*output_by_A: int):
+        return {"b": 3}
+
+    def C():
+        return {"c": 4}
+
+    def D(output_by_B_and_C):
+        pass
+
+    def E():
+        pass
+
+    def F():
+        pass
+
+    stream = DagStream()
+    nodes = stream.emplace(A, B, C, D, E, F)
+
+    name2node = {v.display_name: v for v in nodes}
+    return stream, name2node
+
+
+def test__pipe_dagstream():
+    ...
+
+# endregion

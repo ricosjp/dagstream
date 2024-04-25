@@ -1,7 +1,7 @@
 import abc
 from typing import Iterable
 
-from dagstream.graph_components.nodes import IDrawableNode, IFunctionalNode
+from dagstream.graph_components._interface import IDrawableNode, IFunctionalNode
 
 
 class IDrawableGraph(metaclass=abc.ABCMeta):

@@ -10,7 +10,7 @@ def test__get_function_name():
         pass
 
     node = FunctionalNode(sample)
-    assert node.name == "sample"
+    assert node.display_name == "sample"
 
 
 def test__get_callable_class_name():
@@ -22,7 +22,7 @@ def test__get_callable_class_name():
             pass
 
     node = FunctionalNode(SampleClass())
-    assert node.name == "SampleClass"
+    assert node.display_name == "SampleClass"
 
 
 def test__change_function_name():
@@ -30,8 +30,8 @@ def test__change_function_name():
         pass
 
     node = FunctionalNode(sample)
-    node.name = "sample2"
-    assert node.name == "sample2"
+    node.display_name = "sample2"
+    assert node.display_name == "sample2"
 
 
 def test__call_succeed_when_precede():
