@@ -3,13 +3,16 @@ from __future__ import annotations
 import types
 from typing import Any, Callable, Iterable
 
+from dagstream.graph_components._interface import (
+    IDagEdge,
+    IDrawableNode,
+    IFunctionalNode,
+)
 from dagstream.graph_components.edges import DagEdge
-from dagstream.graph_components._interface import IDagEdge, IFunctionalNode, IDrawableNode
 
 from .node_state import ReadyNodeState
 
-
-# NOTE: If FunctionalNode has reference to other nodes, 
+# NOTE: If FunctionalNode has reference to other nodes,
 # one node has almost all information of DAG.
 # It costs too much memory and it is difficult to multi-processing.
 # So, a node has only names about connected ones.
@@ -21,7 +24,7 @@ class FunctionalNode(IFunctionalNode, IDrawableNode):
         self._from: set[str] = set()
         self._to_edges: dict[str, IDagEdge] = {}
         self._mut_name = self._get_name(user_function)
-        self._display_name =  self._get_name(user_function)
+        self._display_name = self._get_name(user_function)
 
         self.__received: list[Any] = []
 
@@ -82,9 +85,7 @@ class FunctionalNode(IFunctionalNode, IDrawableNode):
                 continue
 
             self._to_edges[node._mut_name] = DagEdge(
-                from_node=self.mut_name,
-                to_node=node.mut_name,
-                pipe=pipe
+                from_node=self.mut_name, to_node=node.mut_name, pipe=pipe
             )
             node.succeed(self, pipe=pipe)
 
@@ -96,5 +97,5 @@ class FunctionalNode(IFunctionalNode, IDrawableNode):
             node.precede(self, pipe=pipe)
 
     def run(self, *args, **kwargs):
-        result = self._user_function(*self.__received, *args, **kwargs)        
+        result = self._user_function(*self.__received, *args, **kwargs)
         return result

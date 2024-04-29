@@ -29,11 +29,13 @@ class IFunctionalNode(IDrawableNode, metaclass=abc.ABCMeta):
 
     @display_name.setter
     @abc.abstractmethod
-    def display_name(self) -> None: ...
+    def display_name(self) -> None:
+        ...
 
     @property
     @abc.abstractmethod
-    def mut_name(self) -> str: ...
+    def mut_name(self) -> str:
+        ...
 
     @property
     @abc.abstractmethod
@@ -100,7 +102,6 @@ class INodeState(metaclass=abc.ABCMeta):
     @abc.abstractmethod
     def forward(self) -> None:
         raise NotImplementedError()
-
 
 
 class IDagEdge(metaclass=abc.ABCMeta):

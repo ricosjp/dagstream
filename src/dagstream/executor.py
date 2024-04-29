@@ -27,7 +27,13 @@ class StreamExecutor:
             )
         self._dag = functional_dag
 
-    def run(self, *args: Any, first_args: list[Any] = None, save_state: bool = False, **kwargs) -> dict[str, Any]:
+    def run(
+        self,
+        *args: Any,
+        first_args: list[Any] = None,
+        save_state: bool = False,
+        **kwargs,
+    ) -> dict[str, Any]:
         """Run functions sequencially according to static order.
 
         Input parameters are passed to all functions.
@@ -89,7 +95,13 @@ class StreamParallelExecutor:
             result = func.run(*args, **kwargs)
             done_queue.put((func, result))
 
-    def run(self, *args: Any, first_args: list[Any] = None, save_state: bool = False, **kwargs) -> dict[str, Any]:
+    def run(
+        self,
+        *args: Any,
+        first_args: list[Any] = None,
+        save_state: bool = False,
+        **kwargs,
+    ) -> dict[str, Any]:
         """Run functions in parallel.
 
         Parameters are passed to all functions.

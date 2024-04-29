@@ -1,7 +1,7 @@
 import abc
 
-from dagstream.utils.errors import DagStreamNotReadyError
 from dagstream.graph_components._interface import INodeState
+from dagstream.utils.errors import DagStreamNotReadyError
 
 
 class UnReadyNodeState(INodeState):

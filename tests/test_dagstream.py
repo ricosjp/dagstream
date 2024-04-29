@@ -206,6 +206,7 @@ def test__emplate_multiple_times(
 
 # region dagstream with pipe
 
+
 @pytest.fixture
 def setup_dagstream():
     def A():
@@ -235,5 +236,6 @@ def setup_dagstream():
 
 def test__pipe_dagstream():
     ...
+
 
 # endregion

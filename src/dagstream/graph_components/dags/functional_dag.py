@@ -1,8 +1,13 @@
 from typing import Any, Iterable
 
-from dagstream.graph_components._interface import IDagEdge, IFunctionalNode, IDrawableNode, INodeState
-from .interface import IDrawableGraph
+from dagstream.graph_components._interface import (
+    IDagEdge,
+    IDrawableNode,
+    IFunctionalNode,
+    INodeState,
+)
 
+from .interface import IDrawableGraph
 
 
 class FunctionalDag(IDrawableGraph):
@@ -15,7 +20,9 @@ class FunctionalDag(IDrawableGraph):
             node.mut_name: node.prepare() for node in name2nodes.values()
         }
         self._ready_nodes: list[IFunctionalNode] = [
-            node for node in name2nodes.values() if self._name2state[node.mut_name].is_ready
+            node
+            for node in name2nodes.values()
+            if self._name2state[node.mut_name].is_ready
         ]
 
     @property

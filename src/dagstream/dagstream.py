@@ -37,7 +37,7 @@ class DagStream(IDrawableGraph):
         for func in functions:
             node = FunctionalNode(func)
             _functions.update({node.mut_name: node})
-        
+
         self._name2node |= _functions
         return tuple(_functions.values())
 
