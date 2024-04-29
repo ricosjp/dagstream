@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import abc
-from typing import Any, Iterable, Union
+from typing import Any, Iterable
 
 
 class IDrawableNode(metaclass=abc.ABCMeta):
@@ -12,7 +12,7 @@ class IDrawableNode(metaclass=abc.ABCMeta):
 
     @property
     @abc.abstractmethod
-    def successors(self) -> set[IFunctionalNode]:
+    def successors(self) -> Iterable[IDagEdge]:
         raise NotImplementedError()
 
     @property
@@ -57,17 +57,12 @@ class IFunctionalNode(IDrawableNode, metaclass=abc.ABCMeta):
     def n_successors(self) -> int:
         ...
 
-    @property
     @abc.abstractmethod
-    def forward_edges(self) -> Iterable[IDagEdge]:
+    def precede(self, *nodes: IFunctionalNode, pipe: bool = False) -> None:
         ...
 
     @abc.abstractmethod
-    def precede(self, *functions: IFunctionalNode) -> None:
-        ...
-
-    @abc.abstractmethod
-    def succeed(self, *functions: IFunctionalNode) -> None:
+    def succeed(self, *nodes: IFunctionalNode, pipe: bool = False) -> None:
         ...
 
     @abc.abstractmethod
@@ -75,7 +70,7 @@ class IFunctionalNode(IDrawableNode, metaclass=abc.ABCMeta):
         ...
 
     @abc.abstractmethod
-    def receive_args(self, *val: Union[Any, None]) -> None:
+    def receive_args(self, val: Any) -> None:
         ...
 
     @abc.abstractmethod

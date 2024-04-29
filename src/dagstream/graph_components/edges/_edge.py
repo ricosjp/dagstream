@@ -1,6 +1,4 @@
-from typing import Any
-
-from dagstream.graph_components._interface import IDagEdge, IFunctionalNode
+from dagstream.graph_components._interface import IDagEdge
 
 
 class DagEdge(IDagEdge):

@@ -65,11 +65,7 @@ class FunctionalNode(IFunctionalNode, IDrawableNode):
         return self._from
 
     @property
-    def successors(self) -> list[IDagEdge]:
-        return self._to_edges.values()
-
-    @property
-    def forward_edges(self) -> dict[str, IDagEdge]:
+    def successors(self) -> Iterable[IDagEdge]:
         return self._to_edges.values()
 
     def prepare(self) -> ReadyNodeState:
@@ -79,17 +75,17 @@ class FunctionalNode(IFunctionalNode, IDrawableNode):
     def receive_args(self, val: Any) -> None:
         self.__received.append(val)
 
-    def precede(self, *nodes: FunctionalNode, pipe: bool = False) -> None:
+    def precede(self, *nodes: IFunctionalNode, pipe: bool = False) -> None:
         for node in nodes:
-            if node._mut_name in self._to_edges:
+            if node.mut_name in self._to_edges:
                 continue
 
-            self._to_edges[node._mut_name] = DagEdge(
+            self._to_edges[node.mut_name] = DagEdge(
                 from_node=self.mut_name, to_node=node.mut_name, pipe=pipe
             )
             node.succeed(self, pipe=pipe)
 
-    def succeed(self, *nodes: FunctionalNode, pipe: bool = False) -> None:
+    def succeed(self, *nodes: IFunctionalNode, pipe: bool = False) -> None:
         for node in nodes:
             if node in self._from:
                 continue

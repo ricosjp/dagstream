@@ -1,4 +1,4 @@
-from typing import Callable, Iterable, Optional
+from typing import Callable, Iterable, Optional, Union
 
 from dagstream.graph_components import (
     FunctionalDag,
@@ -14,13 +14,19 @@ class DagStream(IDrawableGraph):
     def __init__(self) -> None:
         self._name2node: dict[str, IFunctionalNode] = {}
 
-    def check_exists(self, node: IFunctionalNode) -> bool:
-        return node.mut_name in self._name2node
+    def check_exists(self, node: Union[str, IFunctionalNode]) -> bool:
+        if isinstance(node, IFunctionalNode):
+            return node.mut_name in self._name2node
+
+        if isinstance(node, str):
+            return node in self._name2node
+
+        raise NotImplementedError()
 
     def get_drawable_nodes(self) -> Iterable[IDrawableNode]:
         return self._name2node.values()
 
-    def get_functions(self) -> set[IFunctionalNode]:
+    def get_functions(self) -> Iterable[IFunctionalNode]:
         return self._name2node.values()
 
     def emplace(self, *functions: Callable) -> tuple[IFunctionalNode, ...]:

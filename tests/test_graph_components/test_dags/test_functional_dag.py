@@ -83,3 +83,10 @@ def test__n_finished_when_done():
 
     dag.done(node.mut_name)
     assert dag._n_finished == 1
+
+
+def test__check_last(create_functional_nodes):
+    dag = FunctionalDag(create_functional_nodes)
+
+    assert dag.check_last("sample3")
+    assert not dag.check_last("sample2")

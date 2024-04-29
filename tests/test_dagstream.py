@@ -54,7 +54,7 @@ def setup_dagstream():
     stream = DagStream()
     nodes = stream.emplace(A, B, C, D, E, F)
 
-    name2node = {v.display_name: v for v in nodes}
+    name2node = {v.mut_name: v for v in nodes}
     return stream, name2node
 
 
@@ -204,38 +204,5 @@ def test__emplate_multiple_times(
     assert len(stream._name2node) == n_functions + 1
 
 
-# region dagstream with pipe
-
-
-@pytest.fixture
-def setup_dagstream():
-    def A():
-        return [1, 2]
-
-    def B(*output_by_A: int):
-        return {"b": 3}
-
-    def C():
-        return {"c": 4}
-
-    def D(output_by_B_and_C):
-        pass
-
-    def E():
-        pass
-
-    def F():
-        pass
-
-    stream = DagStream()
-    nodes = stream.emplace(A, B, C, D, E, F)
-
-    name2node = {v.display_name: v for v in nodes}
-    return stream, name2node
-
-
-def test__pipe_dagstream():
+def test__emplace_same_function_multiple_times():
     ...
-
-
-# endregion

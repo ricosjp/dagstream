@@ -1,9 +1,10 @@
+import os
 import time
+
+import pytest
 
 from dagstream import DagStream
 from dagstream.executor import StreamExecutor, StreamParallelExecutor
-
-# region Test for Parallel Execution
 
 
 def funcA():
@@ -26,7 +27,13 @@ def funcE():
     time.sleep(1)
 
 
-def test__parallel_run_is_faster_than_single_run():
+@pytest.fixture
+def confirm_cpu_count():
+    # To perform this test, it is neccesarry 4 cpus
+    assert os.cpu_count() >= 4
+
+
+def test__parallel_run_is_faster_than_single_run(confirm_cpu_count):
     stream_parallel = DagStream()
     # All nodes can be run in parallel
     stream_parallel.emplace(funcA, funcB, funcC, funcD)
@@ -37,7 +44,7 @@ def test__parallel_run_is_faster_than_single_run():
     elapsed_time = time.time() - start
 
     start = time.time()
-    executor = StreamParallelExecutor(stream_parallel.construct(), n_processes=4)
+    executor = StreamParallelExecutor(stream_parallel.construct(), n_process=4)
     executor.run()
     elapsed_time_parallel = time.time() - start
 
@@ -48,7 +55,7 @@ def test__parallel_run_is_faster_than_single_run():
     assert abs(elapsed_time - elapsed_time_parallel * 4) < 1.0
 
 
-def test__can_run_in_parallel_with_orders():
+def test__can_run_in_parallel_with_orders(confirm_cpu_count):
     stream = DagStream()
     A, B, C, D, E = stream.emplace(funcA, funcB, funcC, funcD, funcE)
 
@@ -56,8 +63,6 @@ def test__can_run_in_parallel_with_orders():
     E.succeed(B, C, D)
     D.succeed(C)
 
-    executor = StreamParallelExecutor(stream.construct(), n_processes=4)
+    assert os.cpu_count() >= 4
+    executor = StreamParallelExecutor(stream.construct(), n_process=4)
     executor.run()
-
-
-# endregion

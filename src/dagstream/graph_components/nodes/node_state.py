@@ -1,5 +1,3 @@
-import abc
-
 from dagstream.graph_components._interface import INodeState
 from dagstream.utils.errors import DagStreamNotReadyError
 

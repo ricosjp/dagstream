@@ -1,7 +1,6 @@
-from typing import Any, Iterable
+from typing import Any, Iterable, Union
 
 from dagstream.graph_components._interface import (
-    IDagEdge,
     IDrawableNode,
     IFunctionalNode,
     INodeState,
@@ -16,7 +15,7 @@ class FunctionalDag(IDrawableGraph):
         self._n_finished: int = 0
         self._n_functions: int = len(self._name2nodes)
 
-        self._name2state: dict[IFunctionalNode, INodeState] = {
+        self._name2state: dict[str, INodeState] = {
             node.mut_name: node.prepare() for node in name2nodes.values()
         }
         self._ready_nodes: list[IFunctionalNode] = [
@@ -24,6 +23,16 @@ class FunctionalDag(IDrawableGraph):
             for node in name2nodes.values()
             if self._name2state[node.mut_name].is_ready
         ]
+
+        self._last_node_names: set[str] = {
+            node.mut_name for node in name2nodes.values() if self._is_last_node(node)
+        }
+
+    def _is_last_node(self, node: IFunctionalNode):
+        n_successors = sum(
+            [1 for edge in node.successors if edge.to_node in self._name2nodes]
+        )
+        return n_successors == 0
 
     @property
     def is_active(self) -> bool:
@@ -36,7 +45,16 @@ class FunctionalDag(IDrawableGraph):
         """
         return self._n_finished < self._n_functions
 
-    def check_exists(self, node: IFunctionalNode) -> bool:
+    def check_last(self, node: Union[str, IFunctionalNode]):
+        if isinstance(node, str):
+            return node in self._last_node_names
+
+        if isinstance(node, IFunctionalNode):
+            return node.mut_name in self._last_node_names
+
+        raise NotImplementedError()
+
+    def check_exists(self, node: Union[IFunctionalNode, str]) -> bool:
         """Chech whether node exists in this functional dag.
 
         Parameters
@@ -49,7 +67,12 @@ class FunctionalDag(IDrawableGraph):
         bool
             True if node exists in this functional dag.
         """
-        return node.mut_name in self._name2nodes
+        if isinstance(node, IFunctionalNode):
+            return node.mut_name in self._name2nodes
+        if isinstance(node, str):
+            return node in self._name2nodes
+
+        raise NotImplementedError()
 
     def get_drawable_nodes(self) -> Iterable[IDrawableNode]:
         return self._name2nodes.values()
@@ -65,6 +88,10 @@ class FunctionalDag(IDrawableGraph):
         for edge in node.successors:
             if not edge.is_pipe:
                 continue
+
+            if not self.check_exists(edge.to_node):
+                continue
+
             next_node = self._name2nodes[edge.to_node]
             next_node.receive_args(result)
 
@@ -81,6 +108,9 @@ class FunctionalDag(IDrawableGraph):
             self._n_finished += 1
             finished_node = self._name2nodes[name]
             for edge in finished_node.successors:
+                if not self.check_exists(edge.to_node):
+                    continue
+
                 self._name2state[edge.to_node].forward()
                 if self._name2state[edge.to_node].is_ready:
                     self._ready_nodes.append(self._name2nodes[edge.to_node])

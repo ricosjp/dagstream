@@ -1,5 +1,6 @@
 import abc
 import pathlib
+from typing import Union
 
 from dagstream.graph_components import IDrawableGraph
 
@@ -14,7 +15,9 @@ class MermaidDrawer(IDrawer):
         self._spliter = "\n" + " " * 4
         self._dir = "LR"
 
-    def output(self, graph: IDrawableGraph, file_path: pathlib.Path) -> None:
+    def output(
+        self, graph: IDrawableGraph, file_path: Union[pathlib.Path, str]
+    ) -> None:
         """output content to file_path
 
         Parameters
@@ -42,13 +45,16 @@ class MermaidDrawer(IDrawer):
             if node.n_predecessors == 0:
                 context.append(f"[*] --> {state_name}")
 
-            succesors = [v for v in node.successors if graph.check_exists(v)]
+            succesors = [v for v in node.successors if graph.check_exists(v.to_node)]
             if len(succesors) == 0:
                 context.append(f"{state_name} --> [*]")
                 continue
 
             for successor in succesors:
-                successor_state = name2id[successor.display_name]
-                context.append(f"{state_name} --> {successor_state}")
+                successor_state = name2id[successor.to_node]
+                if successor.is_pipe:
+                    context.append(f"{state_name} --> {successor_state}: Pipe")
+                else:
+                    context.append(f"{state_name} --> {successor_state}")
 
         return self._spliter.join(context)
