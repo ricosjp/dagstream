@@ -76,10 +76,26 @@ def test__exist_all_nodes_when_construct(
     setup_nodes_relationship(relationship, name2node)
     nodes = stream.get_functions()
 
-    dag = stream.construct()
     assert len(nodes) > 0
     for node in nodes:
-        assert dag.check_exists(node)
+        assert stream.check_exists(node)
+        assert stream.check_exists(node.mut_name)
+
+
+@pytest.mark.parametrize(
+    "relationship",
+    [({"A": ["B", "C"], "B": ["E"], "C": ["E", "D"], "D": ["E"], "E": ["F"]})],
+)
+def test__get_drawable_nodes(
+    relationship, setup_dagstream: tuple[DagStream, dict[str, FunctionalNode]]
+):
+    stream, name2node = setup_dagstream
+    setup_nodes_relationship(relationship, name2node)
+    nodes = stream.get_functions()
+    drawable_nodes = stream.get_drawable_nodes()
+
+    assert len(nodes) > 0
+    assert len(drawable_nodes) == len(nodes)
 
 
 @pytest.mark.parametrize(
@@ -170,6 +186,11 @@ def test__is_exist_node_when_extracting_functions(
         (
             {"A": ["B", "C"], "B": ["E"], "C": ["E", "D"], "D": ["E"], "E": ["F"]},
             ["F"],
+            ["A", "B", "C", "D", "E", "F"],
+        ),
+        (
+            {"A": ["B", "C"], "B": ["E"], "C": ["E", "D"], "D": ["E"], "E": ["F"]},
+            ["A", "C", "F"],
             ["A", "B", "C", "D", "E", "F"],
         ),
     ],

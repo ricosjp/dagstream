@@ -89,11 +89,6 @@ class StreamParallelExecutor:
         if self._n_processes <= 0:
             raise ValueError(f"n_processes must be larger than 0. Input: {n_process}")
 
-    def _worker(self, input_queue: multi.Queue, done_queue: multi.Queue):
-        for func, args, kwargs in iter(input_queue.get, "STOP"):
-            result = func.run(*args, **kwargs)
-            done_queue.put((func, result))
-
     def run(
         self,
         *args: Any,
@@ -130,9 +125,7 @@ class StreamParallelExecutor:
             # Start worker processes
             n_left_process = self._n_processes - len(all_processes)
             for _ in range(n_left_process):
-                process = multi.Process(
-                    target=self._worker, args=(task_queue, done_queue)
-                )
+                process = multi.Process(target=_worker, args=(task_queue, done_queue))
                 process.start()
                 all_processes.append(process)
 
@@ -153,3 +146,9 @@ class StreamParallelExecutor:
                     task_queue.put("STOP")
 
         return results
+
+
+def _worker(input_queue: multi.Queue, done_queue: multi.Queue):
+    for func, args, kwargs in iter(input_queue.get, "STOP"):
+        result = func.run(*args, **kwargs)
+        done_queue.put((func, result))

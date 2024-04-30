@@ -1,17 +1,19 @@
+import multiprocessing as multi
 import os
 
 import pytest
 
 from dagstream import DagStream
-from dagstream.executor import StreamParallelExecutor
+from dagstream.executor import StreamParallelExecutor, _worker
+from dagstream.graph_components.nodes import FunctionalNode
 
 
-def sample1(*args):
-    return args
+def sample1(args: int):
+    return args + 1
 
 
-def sample2(*args):
-    return 2
+def sample2(args: int):
+    return args + 2
 
 
 def sample3(*args):
@@ -59,6 +61,22 @@ def construct_stream():
     return stream, name2node
 
 
+def test__cannot_initialize_before_calling_construct(construct_stream):
+    stream, _ = construct_stream
+
+    with pytest.raises(ValueError):
+        _ = StreamParallelExecutor(stream)
+
+
+@pytest.mark.parametrize("n_process", [-1, 0, -100])
+def test__not_allowed_non_positive_n_process(n_process, construct_stream):
+    stream, _ = construct_stream
+
+    functional_dag = stream.construct()
+    with pytest.raises(ValueError):
+        _ = StreamParallelExecutor(functional_dag, n_process=n_process)
+
+
 @pytest.mark.parametrize(
     "mandatory_names, num_of_results, save_state",
     [
@@ -79,7 +97,7 @@ def test__n_results_when_parallel_executor(
 
     executor = StreamParallelExecutor(functional_dag, n_process=2)
 
-    result = executor.run(save_state=save_state)
+    result = executor.run(0, save_state=save_state)
 
     assert len(result) == num_of_results
 
@@ -87,3 +105,30 @@ def test__n_results_when_parallel_executor(
 # HACK: NEED to implement by using concurrent.futures
 # def test__when_subprocess_is_failed():
 #     ...
+
+
+@pytest.mark.parametrize(
+    "inputs, expected",
+    [
+        ([(sample1, (2,), {})], [3]),
+        ([(sample1, (4,), {}), (sample2, (5,), {})], [5, 7]),
+    ],
+)
+def test__worker(inputs, expected):
+    input_queue = multi.Queue()
+    done_queue = multi.Queue()
+
+    for argvs in inputs:
+        func, arg, kwards = argvs
+        input_queue.put((FunctionalNode(func), arg, kwards))
+    input_queue.put("STOP")
+
+    _worker(input_queue, done_queue)
+
+    assert done_queue.qsize() == len(inputs)
+
+    idx = 0
+    while not done_queue.empty():
+        func, result = done_queue.get()
+        assert result == expected[idx]
+        idx += 1

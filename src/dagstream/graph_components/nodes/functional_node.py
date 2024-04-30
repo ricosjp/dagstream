@@ -85,7 +85,7 @@ class FunctionalNode(IFunctionalNode, IDrawableNode):
 
     def succeed(self, *nodes: IFunctionalNode, pipe: bool = False) -> None:
         for node in nodes:
-            if node in self._from:
+            if node.mut_name in self._from:
                 continue
             self._from.add(node.mut_name)
             node.precede(self, pipe=pipe)

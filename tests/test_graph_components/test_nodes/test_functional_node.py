@@ -112,3 +112,19 @@ def test_prepare():
     node1 = FunctionalNode(sample1)
     state = node1.prepare()
     assert isinstance(state, node_state.ReadyNodeState)
+
+
+def test__n_successors(create_nodes_relationship: tuple[FunctionalNode, ...]):
+    node1, node2, node3 = create_nodes_relationship
+
+    assert node1.n_successors == 2
+    assert node2.n_successors == 1
+    assert node3.n_successors == 0
+
+
+def test__hash(create_nodes_relationship):
+    node1, node2, node3 = create_nodes_relationship
+
+    assert hash(node1) == hash(node1)
+    assert hash(node1) != hash(node2)
+    assert hash(node1) != hash(node3)

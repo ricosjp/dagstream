@@ -114,7 +114,7 @@ class DagStream(IDrawableGraph):
         while len(predecessors) != 0:
             node_name = predecessors.pop()
             node = self._name2node[node_name]
-            if node in visited:
+            if node.mut_name in visited:
                 continue
             visited.update({node.mut_name: node})
 
@@ -124,10 +124,10 @@ class DagStream(IDrawableGraph):
         return None
 
     def _detect_cycle(self):
-        finished = set()
-        seen = set()
+        finished: set[str] = set()
+        seen: set[str] = set()
         for node in self._name2node.values():
-            if node in finished:
+            if node.mut_name in finished:
                 continue
             self._dfs_detect_cycle(node, finished, seen)
         return None
@@ -135,19 +135,19 @@ class DagStream(IDrawableGraph):
     def _dfs_detect_cycle(
         self,
         start: IFunctionalNode,
-        finished: set[IFunctionalNode],
-        seen: set[IFunctionalNode],
+        finished: set[str],
+        seen: set[str],
     ) -> None:
         for edge in start.successors:
             node = self._name2node[edge.to_node]
 
-            if node in finished:
+            if node.mut_name in finished:
                 continue
 
-            if (node in seen) and (node not in finished):
+            if (node.mut_name in seen) and (node.mut_name not in finished):
                 raise DagStreamCycleError("Detect cycle in your definition of dag.")
 
-            seen.add(node)
+            seen.add(node.mut_name)
             self._dfs_detect_cycle(node, finished, seen)
 
-        finished.add(start)
+        finished.add(start.mut_name)

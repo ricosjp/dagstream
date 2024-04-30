@@ -4,10 +4,27 @@ from dagstream.graph_components.nodes.node_state import ReadyNodeState, UnReadyN
 from dagstream.utils.errors import DagStreamNotReadyError
 
 
-def test__unready_state():
+def test__unready_state_forward():
     state = UnReadyNodeState()
     with pytest.raises(DagStreamNotReadyError):
         state.forward()
+
+
+def test__unready_state_n_predecessors():
+    state = UnReadyNodeState()
+    with pytest.raises(DagStreamNotReadyError):
+        _ = state.n_predecessors
+
+
+def test__unready_state_is_finished():
+    state = UnReadyNodeState()
+    with pytest.raises(DagStreamNotReadyError):
+        _ = state.is_finished
+
+
+def test__unready_state_is_ready():
+    state = UnReadyNodeState()
+    assert not state.is_ready
 
 
 @pytest.mark.parametrize("n_predecessors", [10, 2, 3])

@@ -56,6 +56,13 @@ def construct_stream():
     return stream, name2node
 
 
+def test__cannot_initialize_before_calling_construct(construct_stream):
+    stream, _ = construct_stream
+
+    with pytest.raises(ValueError):
+        _ = StreamExecutor(stream)
+
+
 @pytest.mark.parametrize(
     "mandatory_names, num_of_results, save_state",
     [
