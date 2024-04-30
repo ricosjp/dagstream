@@ -16,4 +16,6 @@ ignore =
     # https://pycodestyle.pycqa.org/en/latest/intro.html#error-codes
     # E203, # whitespace before ':'.
     # E231, # whitespace after ','.
-    
+per-file-ignores =
+    # imported but unused
+    __init__.py: F401

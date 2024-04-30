@@ -1,64 +1,95 @@
 from __future__ import annotations
 
-import types
-from typing import Callable
+from typing import Any, Callable, Iterable, Union
 
-from .interface import IDrawableNode, IFunctionalNode
-from .node_state import ReadyNodeState
+from dagstream import utils
+from dagstream.graph_components._interface import (
+    IDagEdge,
+    IDrawableNode,
+    IFunctionalNode,
+)
+from dagstream.graph_components.edges import DagEdge
+from dagstream.graph_components.nodes.node_state import ReadyNodeState
+
+# NOTE: If FunctionalNode has reference to other nodes,
+# one node has almost all information of DAG.
+# It costs too much memory and it is difficult to multi-processing.
+# So, a node has only names about connected ones.
 
 
 class FunctionalNode(IFunctionalNode, IDrawableNode):
-    def __init__(self, user_function: Callable) -> None:
+    def __init__(
+        self, user_function: Callable, *, mut_node_name: Union[str, None] = None
+    ) -> None:
         self._user_function = user_function
-        self._from: set[IFunctionalNode] = set()
-        self._to: set[IFunctionalNode] = set()
-        self._name = self._get_name(user_function)
+        self._from: set[str] = set()
+        self._to_edges: dict[str, IDagEdge] = {}
 
-    def _get_name(self, user_function: Callable) -> str:
-        if isinstance(user_function, types.FunctionType):
-            return user_function.__name__
+        if mut_node_name is None:
+            mut_node_name = utils.get_function_name(user_function)
+        self._mut_name = mut_node_name
+        self._display_name = utils.get_function_name(user_function)
 
-        return user_function.__class__.__name__
+        self.__received: list[Any] = []
 
     def __repr__(self) -> str:
-        return f"{FunctionalNode.__name__}:{self.name}"
+        return f"{FunctionalNode.__name__}: {self._display_name}"
+
+    def __hash__(self):
+        return hash(self.mut_name)
 
     @property
-    def name(self) -> str:
-        return self._name
+    def display_name(self) -> str:
+        return self._display_name
 
-    @name.setter
-    def name(self, value: str):
-        self._name = value
+    @display_name.setter
+    def display_name(self, value: str):
+        self._display_name = value
+
+    @property
+    def mut_name(self) -> str:
+        return self._mut_name
 
     @property
     def n_predecessors(self) -> int:
         return len(self._from)
 
     @property
-    def predecessors(self) -> set[IFunctionalNode]:
+    def n_successors(self) -> int:
+        return len(self._to_edges)
+
+    @property
+    def predecessors(self) -> set[str]:
         return self._from
 
     @property
-    def successors(self) -> set[IFunctionalNode]:
-        return self._to
+    def successors(self) -> Iterable[IDagEdge]:
+        return self._to_edges.values()
 
     def prepare(self) -> ReadyNodeState:
+        self.__received = []
         return ReadyNodeState(self.n_predecessors)
 
-    def precede(self, *functions: IFunctionalNode) -> None:
-        for func in functions:
-            if func in self._to:
-                continue
-            self._to.add(func)
-            func.succeed(self)
+    def receive_args(self, val: Any) -> None:
+        self.__received.append(val)
 
-    def succeed(self, *functions: IFunctionalNode) -> None:
-        for func in functions:
-            if func in self._from:
+    def precede(self, *nodes: IFunctionalNode, pipe: bool = False) -> None:
+        for node in nodes:
+            if node.mut_name in self._to_edges:
                 continue
-            self._from.add(func)
-            func.precede(self)
+
+            self._to_edges[node.mut_name] = DagEdge(
+                from_node=self.mut_name, to_node=node.mut_name, pipe=pipe
+            )
+            node.succeed(self, pipe=pipe)
+
+    def succeed(self, *nodes: IFunctionalNode, pipe: bool = False) -> None:
+        for node in nodes:
+            if node.mut_name in self._from:
+                continue
+            self._from.add(node.mut_name)
+            node.precede(self, pipe=pipe)
 
     def run(self, *args, **kwargs):
-        return self._user_function(*args, **kwargs)
+        result = self._user_function(*self.__received, *args, **kwargs)
+        return result

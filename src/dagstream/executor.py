@@ -1,7 +1,6 @@
 import multiprocessing as multi
-from typing import Any
+from typing import Any, Union
 
-from dagstream.dagstream import IFunctionalNode
 from dagstream.graph_components import FunctionalDag
 
 
@@ -26,7 +25,13 @@ class StreamExecutor:
             )
         self._dag = functional_dag
 
-    def run(self, *args, **kwargs) -> dict[str, Any]:
+    def run(
+        self,
+        *args: Any,
+        first_args: Union[tuple[Any], None] = None,
+        save_state: bool = False,
+        **kwargs,
+    ) -> dict[str, Any]:
         """Run functions sequencially according to static order.
 
         Input parameters are passed to all functions.
@@ -37,12 +42,20 @@ class StreamExecutor:
             Key is name of function, value is returned objects from each function.
         """
         results: dict[str, Any] = {}
+
         while self._dag.is_active:
             nodes = self._dag.get_ready()
             for node in nodes:
+                if node.n_predecessors == 0 and first_args is not None:
+                    for arg in first_args:
+                        node.receive_args(arg)
+
                 result = node.run(*args, **kwargs)
-                results.update({node.name: result})
-                self._dag.done(node)
+                self._dag.send(node.mut_name, result)
+                self._dag.done(node.mut_name)
+
+                if self._dag.check_last(node) or save_state:
+                    results.update({node.display_name: result})
 
         return results
 
@@ -50,7 +63,7 @@ class StreamExecutor:
 class StreamParallelExecutor:
     """Parallel Executor for FunctionalDag Object."""
 
-    def __init__(self, functional_dag: FunctionalDag, n_processes: int = 1) -> None:
+    def __init__(self, functional_dag: FunctionalDag, n_process: int = 1) -> None:
         """THIS IS EXPERIMENTAL FEATURE. Parallel Executor for FunctionalDag Object.
 
         Parameters
@@ -72,16 +85,17 @@ class StreamParallelExecutor:
             )
 
         self._dag = functional_dag
-        self._n_processes = n_processes
+        self._n_processes = n_process
         if self._n_processes <= 0:
-            raise ValueError(f"n_processes must be larger than 0. Input: {n_processes}")
+            raise ValueError(f"n_processes must be larger than 0. Input: {n_process}")
 
-    def _worker(self, input_queue: multi.Queue, done_queue: multi.Queue):
-        for func, args, kwargs in iter(input_queue.get, "STOP"):
-            result = func.run(*args, **kwargs)
-            done_queue.put((func, result))
-
-    def run(self, *args, **kwargs) -> dict[str, Any]:
+    def run(
+        self,
+        *args: Any,
+        first_args: Union[tuple[Any], None] = None,
+        save_state: bool = False,
+        **kwargs,
+    ) -> dict[str, Any]:
         """Run functions in parallel.
 
         Parameters are passed to all functions.
@@ -97,38 +111,44 @@ class StreamParallelExecutor:
         all_processes: list[multi.Process] = []
 
         results: dict[str, Any] = {}
-        _name2nodes: dict[str, IFunctionalNode] = {
-            node.name: node for node in self._dag._nodes
-        }
 
         while self._dag.is_active:
             nodes = self._dag.get_ready()
 
-            for node_func in nodes:
-                task_queue.put((node_func, args, kwargs))
+            for node in nodes:
+                if node.n_predecessors == 0 and first_args is not None:
+                    for arg in first_args:
+                        node.receive_args(arg)
+
+                task_queue.put((node, args, kwargs))
 
             # Start worker processes
             n_left_process = self._n_processes - len(all_processes)
             for _ in range(n_left_process):
-                process = multi.Process(
-                    target=self._worker, args=(task_queue, done_queue)
-                )
+                process = multi.Process(target=_worker, args=(task_queue, done_queue))
                 process.start()
                 all_processes.append(process)
 
             while not done_queue.empty():
                 _done_node, _result = done_queue.get()
 
-                # HACK: When using multiprocessing, id(IFunctionalNode)
+                # NOTE: When using multiprocessing, id(IFunctionalNode)
                 # after running is not the same as one before running.
-                # This operation is incorporated in the Dagstream object,
-                # after names of all nodes are guranteed to be unique.
-                done_node = _name2nodes[_done_node.name]
-                self._dag.done(done_node)
-                results.update({done_node.name: _result})
+
+                self._dag.send(_done_node.mut_name, _result)
+                self._dag.done(_done_node.mut_name)
+
+                if self._dag.check_last(_done_node) or save_state:
+                    results.update({_done_node.mut_name: _result})
 
             if not self._dag.is_active:
                 for _ in range(self._n_processes):
                     task_queue.put("STOP")
 
         return results
+
+
+def _worker(input_queue: multi.Queue, done_queue: multi.Queue):
+    for func, args, kwargs in iter(input_queue.get, "STOP"):
+        result = func.run(*args, **kwargs)
+        done_queue.put((func, result))

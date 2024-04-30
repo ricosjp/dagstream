@@ -25,10 +25,10 @@ def test__emplace():
     assert len(nodes) == 4
     assert isinstance(nodes, tuple)
 
-    assert nodes[0].name == "sample1"
-    assert nodes[1].name == "sample2"
-    assert nodes[2].name == "sample3"
-    assert nodes[3].name == "sample4"
+    assert nodes[0].display_name == "sample1"
+    assert nodes[1].display_name == "sample2"
+    assert nodes[2].display_name == "sample3"
+    assert nodes[3].display_name == "sample4"
 
 
 @pytest.fixture
@@ -54,7 +54,7 @@ def setup_dagstream():
     stream = DagStream()
     nodes = stream.emplace(A, B, C, D, E, F)
 
-    name2node = {v.name: v for v in nodes}
+    name2node = {v.display_name: v for v in nodes}
     return stream, name2node
 
 
@@ -76,10 +76,26 @@ def test__exist_all_nodes_when_construct(
     setup_nodes_relationship(relationship, name2node)
     nodes = stream.get_functions()
 
-    dag = stream.construct()
     assert len(nodes) > 0
     for node in nodes:
-        assert dag.check_exists(node)
+        assert stream.check_exists(node)
+        assert stream.check_exists(node.mut_name)
+
+
+@pytest.mark.parametrize(
+    "relationship",
+    [({"A": ["B", "C"], "B": ["E"], "C": ["E", "D"], "D": ["E"], "E": ["F"]})],
+)
+def test__get_drawable_nodes(
+    relationship, setup_dagstream: tuple[DagStream, dict[str, FunctionalNode]]
+):
+    stream, name2node = setup_dagstream
+    setup_nodes_relationship(relationship, name2node)
+    nodes = stream.get_functions()
+    drawable_nodes = stream.get_drawable_nodes()
+
+    assert len(nodes) > 0
+    assert len(drawable_nodes) == len(nodes)
 
 
 @pytest.mark.parametrize(
@@ -172,6 +188,11 @@ def test__is_exist_node_when_extracting_functions(
             ["F"],
             ["A", "B", "C", "D", "E", "F"],
         ),
+        (
+            {"A": ["B", "C"], "B": ["E"], "C": ["E", "D"], "D": ["E"], "E": ["F"]},
+            ["A", "C", "F"],
+            ["A", "B", "C", "D", "E", "F"],
+        ),
     ],
 )
 def test__is_subdag_graph_when_extracting(
@@ -185,20 +206,32 @@ def test__is_subdag_graph_when_extracting(
     setup_nodes_relationship(relationship, name2node)
     dag = stream.construct(nodes)
 
-    assert len(dag._nodes) == len(contain_nodes)
+    assert len(dag._name2nodes) == len(contain_nodes)
 
-    for node in dag._nodes:
-        assert node.name in contain_nodes
+    for node in dag._name2nodes.values():
+        assert node.display_name in contain_nodes
 
 
 def test__emplate_multiple_times(
     setup_dagstream: tuple[DagStream, dict[str, FunctionalNode]]
 ):
     stream, _ = setup_dagstream
-    n_functions = len(stream._functions)
+    n_functions = len(stream._name2node)
 
     def sample6():
         pass
 
     _ = stream.emplace(sample6)
-    assert len(stream._functions) == n_functions + 1
+    assert len(stream._name2node) == n_functions + 1
+
+
+def test__emplace_same_function_multiple_times(setup_dagstream):
+    def sample1():
+        ...
+
+    stream = DagStream()
+    _ = stream.emplace(sample1)
+    _ = stream.emplace(sample1)
+    _ = stream.emplace(sample1)
+
+    assert len(stream._name2node) == 3

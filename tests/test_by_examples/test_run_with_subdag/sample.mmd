@@ -1,0 +1,17 @@
+stateDiagram
+    direction LR
+    state "sample1" as state_0
+    state "sample2" as state_1
+    state "sample3" as state_2
+    state "sample4" as state_3
+    state "sample5" as state_4
+    state "sample6" as state_5
+    [*] --> state_0
+    state_0 --> state_1: Pipe
+    state_0 --> state_2: Pipe
+    state_1 --> state_2: Pipe
+    state_2 --> [*]
+    [*] --> state_3
+    state_3 --> state_4: Pipe
+    state_4 --> state_5: Pipe
+    state_5 --> state_2: Pipe

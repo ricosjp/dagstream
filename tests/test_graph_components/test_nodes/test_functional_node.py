@@ -10,7 +10,7 @@ def test__get_function_name():
         pass
 
     node = FunctionalNode(sample)
-    assert node.name == "sample"
+    assert node.display_name == "sample"
 
 
 def test__get_callable_class_name():
@@ -22,7 +22,7 @@ def test__get_callable_class_name():
             pass
 
     node = FunctionalNode(SampleClass())
-    assert node.name == "SampleClass"
+    assert node.display_name == "SampleClass"
 
 
 def test__change_function_name():
@@ -30,8 +30,8 @@ def test__change_function_name():
         pass
 
     node = FunctionalNode(sample)
-    node.name = "sample2"
-    assert node.name == "sample2"
+    node.display_name = "sample2"
+    assert node.display_name == "sample2"
 
 
 def test__call_succeed_when_precede():
@@ -112,3 +112,19 @@ def test_prepare():
     node1 = FunctionalNode(sample1)
     state = node1.prepare()
     assert isinstance(state, node_state.ReadyNodeState)
+
+
+def test__n_successors(create_nodes_relationship: tuple[FunctionalNode, ...]):
+    node1, node2, node3 = create_nodes_relationship
+
+    assert node1.n_successors == 2
+    assert node2.n_successors == 1
+    assert node3.n_successors == 0
+
+
+def test__hash(create_nodes_relationship):
+    node1, node2, node3 = create_nodes_relationship
+
+    assert hash(node1) == hash(node1)
+    assert hash(node1) != hash(node2)
+    assert hash(node1) != hash(node3)

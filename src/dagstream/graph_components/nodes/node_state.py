@@ -1,27 +1,5 @@
-import abc
-
+from dagstream.graph_components._interface import INodeState
 from dagstream.utils.errors import DagStreamNotReadyError
-
-
-class INodeState(metaclass=abc.ABCMeta):
-    @property
-    @abc.abstractmethod
-    def n_predecessors(self) -> int:
-        raise NotImplementedError()
-
-    @property
-    @abc.abstractmethod
-    def is_ready(self) -> bool:
-        raise NotImplementedError()
-
-    @property
-    @abc.abstractmethod
-    def is_finished(self) -> bool:
-        raise NotImplementedError()
-
-    @abc.abstractmethod
-    def forward(self) -> None:
-        raise NotImplementedError()
 
 
 class UnReadyNodeState(INodeState):

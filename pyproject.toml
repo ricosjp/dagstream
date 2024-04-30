@@ -39,3 +39,11 @@ addopts = [
 
 [tool.isort]
 profile = "black"
+
+
+[tool.coverage.report]
+exclude_also = [
+    "def __repr__",
+    "@(abc\\.)?abstractmethod",
+    "raise NotImplementedError"
+    ]

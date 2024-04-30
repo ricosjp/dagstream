@@ -1,7 +1,7 @@
 import abc
-from typing import Iterable
+from typing import Iterable, Union
 
-from dagstream.graph_components.nodes import IDrawableNode, IFunctionalNode
+from dagstream.graph_components._interface import IDrawableNode, IFunctionalNode
 
 
 class IDrawableGraph(metaclass=abc.ABCMeta):
@@ -10,5 +10,5 @@ class IDrawableGraph(metaclass=abc.ABCMeta):
         raise NotImplementedError()
 
     @abc.abstractmethod
-    def check_exists(self, node: IFunctionalNode) -> bool:
+    def check_exists(self, node: Union[IFunctionalNode, str]) -> bool:
         raise NotImplementedError()
