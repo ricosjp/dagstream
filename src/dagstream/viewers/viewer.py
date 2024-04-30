@@ -37,11 +37,11 @@ class MermaidDrawer(IDrawer):
 
         nodes = graph.get_drawable_nodes()
         for i, node in enumerate(nodes):
-            name2id[node.display_name] = (state_name := f"state_{i}")
+            name2id[node.mut_name] = (state_name := f"state_{i}")
             context.append(f'state "{node.display_name}" as {state_name}')
 
         for i, node in enumerate(nodes):
-            state_name = name2id[node.display_name]
+            state_name = name2id[node.mut_name]
             if node.n_predecessors == 0:
                 context.append(f"[*] --> {state_name}")
 

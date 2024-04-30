@@ -1,16 +1,15 @@
 from __future__ import annotations
 
-import types
-from typing import Any, Callable, Iterable
+from typing import Any, Callable, Iterable, Union
 
+from dagstream import utils
 from dagstream.graph_components._interface import (
     IDagEdge,
     IDrawableNode,
     IFunctionalNode,
 )
 from dagstream.graph_components.edges import DagEdge
-
-from .node_state import ReadyNodeState
+from dagstream.graph_components.nodes.node_state import ReadyNodeState
 
 # NOTE: If FunctionalNode has reference to other nodes,
 # one node has almost all information of DAG.
@@ -19,20 +18,19 @@ from .node_state import ReadyNodeState
 
 
 class FunctionalNode(IFunctionalNode, IDrawableNode):
-    def __init__(self, user_function: Callable) -> None:
+    def __init__(
+        self, user_function: Callable, *, mut_node_name: Union[str, None] = None
+    ) -> None:
         self._user_function = user_function
         self._from: set[str] = set()
         self._to_edges: dict[str, IDagEdge] = {}
-        self._mut_name = self._get_name(user_function)
-        self._display_name = self._get_name(user_function)
+
+        if mut_node_name is None:
+            mut_node_name = utils.get_function_name(user_function)
+        self._mut_name = mut_node_name
+        self._display_name = utils.get_function_name(user_function)
 
         self.__received: list[Any] = []
-
-    def _get_name(self, user_function: Callable) -> str:
-        if isinstance(user_function, types.FunctionType):
-            return user_function.__name__
-
-        return user_function.__class__.__name__
 
     def __repr__(self) -> str:
         return f"{FunctionalNode.__name__}: {self._display_name}"

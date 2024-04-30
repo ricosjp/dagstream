@@ -54,7 +54,7 @@ def construct_stream():
     node4.precede(node5, node6)
 
     name2node = {
-        node.mut_name: node for node in [node1, node2, node3, node4, node5, node6]
+        node.display_name: node for node in [node1, node2, node3, node4, node5, node6]
     }
     return stream, name2node
 

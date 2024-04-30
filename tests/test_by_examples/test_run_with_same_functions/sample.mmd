@@ -1,0 +1,12 @@
+stateDiagram
+    direction LR
+    state "increment" as state_0
+    state "increment" as state_1
+    state "increment" as state_2
+    state "summation" as state_3
+    [*] --> state_0
+    state_0 --> state_1: Pipe
+    state_1 --> state_2: Pipe
+    state_1 --> state_3: Pipe
+    state_2 --> state_3: Pipe
+    state_3 --> [*]

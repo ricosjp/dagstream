@@ -54,7 +54,7 @@ def setup_dagstream():
     stream = DagStream()
     nodes = stream.emplace(A, B, C, D, E, F)
 
-    name2node = {v.mut_name: v for v in nodes}
+    name2node = {v.display_name: v for v in nodes}
     return stream, name2node
 
 
@@ -204,5 +204,13 @@ def test__emplate_multiple_times(
     assert len(stream._name2node) == n_functions + 1
 
 
-def test__emplace_same_function_multiple_times():
-    ...
+def test__emplace_same_function_multiple_times(setup_dagstream):
+    def sample1():
+        ...
+
+    stream = DagStream()
+    _ = stream.emplace(sample1)
+    _ = stream.emplace(sample1)
+    _ = stream.emplace(sample1)
+
+    assert len(stream._name2node) == 3

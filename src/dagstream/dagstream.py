@@ -1,5 +1,6 @@
 from typing import Callable, Iterable, Optional, Union
 
+from dagstream import utils
 from dagstream.graph_components import (
     FunctionalDag,
     IDrawableGraph,
@@ -11,6 +12,10 @@ from dagstream.utils.errors import DagStreamCycleError
 
 
 class DagStream(IDrawableGraph):
+    # This counter aims to distinguish
+    # between nodes which have the same function name
+    _SAME_NAME_COUNTER: dict[str, int] = {}
+
     def __init__(self) -> None:
         self._name2node: dict[str, IFunctionalNode] = {}
 
@@ -39,13 +44,27 @@ class DagStream(IDrawableGraph):
         """
 
         # To ensure orders
-        _functions: dict[str, IFunctionalNode] = {}
+        _nodes: list[IFunctionalNode] = []
         for func in functions:
-            node = FunctionalNode(func)
-            _functions.update({node.mut_name: node})
+            node_name = self._create_node_name(func)
+            node = FunctionalNode(func, mut_node_name=node_name)
+            _nodes.append(node)
+            self._name2node.update({node.mut_name: node})
 
-        self._name2node |= _functions
-        return tuple(_functions.values())
+        return tuple(_nodes)
+
+    def _create_node_name(self, user_function: Callable) -> str:
+        function_name = utils.get_function_name(user_function)
+        if function_name not in self._name2node:
+            return function_name
+
+        _counter = self._SAME_NAME_COUNTER.get(function_name, 0)
+        _counter += 1
+
+        node_name = f"{function_name}_{_counter}"
+
+        self._SAME_NAME_COUNTER[function_name] = _counter
+        return node_name
 
     def construct(
         self, mandatory_nodes: Optional[set[IFunctionalNode]] = None

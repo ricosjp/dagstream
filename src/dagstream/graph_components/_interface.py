@@ -8,17 +8,22 @@ class IDrawableNode(metaclass=abc.ABCMeta):
     @property
     @abc.abstractmethod
     def display_name(self) -> str:
-        raise NotImplementedError()
+        ...
+
+    @property
+    @abc.abstractmethod
+    def mut_name(self) -> str:
+        ...
 
     @property
     @abc.abstractmethod
     def successors(self) -> Iterable[IDagEdge]:
-        raise NotImplementedError()
+        ...
 
     @property
     @abc.abstractmethod
     def n_predecessors(self) -> int:
-        raise NotImplementedError()
+        ...
 
 
 class IFunctionalNode(IDrawableNode, metaclass=abc.ABCMeta):
