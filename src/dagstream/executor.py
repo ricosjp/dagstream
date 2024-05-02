@@ -29,7 +29,7 @@ class StreamExecutor:
         self,
         *args: Any,
         first_args: Union[tuple[Any], None] = None,
-        save_state: bool = False,
+        save_all_state: bool = False,
         **kwargs,
     ) -> dict[str, Any]:
         """Run functions sequencially according to static order.
@@ -54,7 +54,7 @@ class StreamExecutor:
                 self._dag.send(node.mut_name, result)
                 self._dag.done(node.mut_name)
 
-                if self._dag.check_last(node) or save_state:
+                if self._dag.check_last(node) or save_all_state:
                     results.update({node.mut_name: result})
 
         return results
@@ -93,7 +93,7 @@ class StreamParallelExecutor:
         self,
         *args: Any,
         first_args: Union[tuple[Any], None] = None,
-        save_state: bool = False,
+        save_all_state: bool = False,
         **kwargs,
     ) -> dict[str, Any]:
         """Run functions in parallel.
@@ -138,7 +138,7 @@ class StreamParallelExecutor:
                 self._dag.send(_done_node.mut_name, _result)
                 self._dag.done(_done_node.mut_name)
 
-                if self._dag.check_last(_done_node) or save_state:
+                if self._dag.check_last(_done_node) or save_all_state:
                     results.update({_done_node.mut_name: _result})
 
             if not self._dag.is_active:

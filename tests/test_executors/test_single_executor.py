@@ -64,7 +64,7 @@ def test__cannot_initialize_before_calling_construct(construct_stream):
 
 
 @pytest.mark.parametrize(
-    "mandatory_names, num_of_results, save_state",
+    "mandatory_names, num_of_results, save_all_state",
     [
         (["sample5"], 1, False),
         (["sample5"], 2, True),
@@ -74,7 +74,7 @@ def test__cannot_initialize_before_calling_construct(construct_stream):
     ],
 )
 def test__n_results_when_parallel_executor(
-    mandatory_names, num_of_results, save_state, construct_stream
+    mandatory_names, num_of_results, save_all_state, construct_stream
 ):
     stream, name2node = construct_stream
 
@@ -83,7 +83,7 @@ def test__n_results_when_parallel_executor(
 
     executor = StreamExecutor(functional_dag)
 
-    result = executor.run(save_state=save_state)
+    result = executor.run(save_all_state=save_all_state)
 
     assert len(result) == num_of_results
 
@@ -107,7 +107,7 @@ def test__pass_first_args(mandatory_names, first_args, first_names, construct_st
     functional_dag = stream.construct(mandatory_nodes=mandatory_nodes)
 
     executor = StreamExecutor(functional_dag)
-    result = executor.run(save_state=True, first_args=first_args)
+    result = executor.run(save_all_state=True, first_args=first_args)
 
     for name in first_names:
         assert result[name][0] == first_args
@@ -127,7 +127,7 @@ def test__pass_common_args(mandatory_names, args, kwards, construct_stream):
     functional_dag = stream.construct(mandatory_nodes=mandatory_nodes)
 
     executor = StreamExecutor(functional_dag)
-    result = executor.run(*args, **kwards, save_state=True)
+    result = executor.run(*args, **kwards, save_all_state=True)
 
     assert len(result) > 0
     for v in result.values():

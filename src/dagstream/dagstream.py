@@ -12,12 +12,11 @@ from dagstream.utils.errors import DagStreamCycleError
 
 
 class DagStream(IDrawableGraph):
-    # This counter aims to distinguish
-    # between nodes which have the same function name
-    _SAME_NAME_COUNTER: dict[str, int] = {}
-
     def __init__(self) -> None:
         self._name2node: dict[str, IFunctionalNode] = {}
+        # This counter aims to distinguish
+        # between nodes which have the same function name
+        self._SAME_NAME_COUNTER: dict[str, int] = {}
 
     def check_exists(self, node: Union[str, IFunctionalNode]) -> bool:
         if isinstance(node, IFunctionalNode):

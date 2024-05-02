@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import abc
-from typing import Any, Iterable, Callable
+from typing import Any, Iterable
 
 
 class IDrawableNode(metaclass=abc.ABCMeta):
