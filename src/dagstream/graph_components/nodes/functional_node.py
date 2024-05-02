@@ -73,6 +73,12 @@ class FunctionalNode(IFunctionalNode, IDrawableNode):
     def receive_args(self, val: Any) -> None:
         self.__received.append(val)
 
+    def get_user_function(self) -> Any:
+        return self._user_function
+
+    def get_received_args(self) -> list[Any]:
+        return self.__received
+
     def precede(self, *nodes: IFunctionalNode, pipe: bool = False) -> None:
         for node in nodes:
             if node.mut_name in self._to_edges:

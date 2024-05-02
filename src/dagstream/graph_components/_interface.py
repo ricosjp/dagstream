@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import abc
-from typing import Any, Iterable
+from typing import Any, Iterable, Callable
 
 
 class IDrawableNode(metaclass=abc.ABCMeta):
@@ -76,6 +76,14 @@ class IFunctionalNode(IDrawableNode, metaclass=abc.ABCMeta):
 
     @abc.abstractmethod
     def receive_args(self, val: Any) -> None:
+        ...
+
+    @abc.abstractmethod
+    def get_received_args(self) -> list[Any]:
+        ...
+
+    @abc.abstractmethod
+    def get_user_function(self) -> Any:
         ...
 
     @abc.abstractmethod
