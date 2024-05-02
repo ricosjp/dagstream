@@ -55,7 +55,7 @@ class StreamExecutor:
                 self._dag.done(node.mut_name)
 
                 if self._dag.check_last(node) or save_state:
-                    results.update({node.display_name: result})
+                    results.update({node.mut_name: result})
 
         return results
 
