@@ -14,15 +14,17 @@ DagStream class convert your functions into dag nodes.
 
    def funcA():
       print("funcA")
+      return 10
 
-   def funcB():
-      print("funcB")
+   def funcB(val_from_A: int):
+      print(f"funcB, received {val_from_A} from A")
 
-   def funcC():
-      print("funcC")
+   def funcC(val_from_A: int):
+      print(f"funcC, received {val_from_A} from A")
+      return 20
 
-   def funcD():
-      print("funcD")
+   def funcD(val_from_C: int):
+      print(f"funcD, received {val_from_C} from C")
 
    def funcE():
       print("funcE")
@@ -36,11 +38,19 @@ DagStream class convert your functions into dag nodes.
    A, B, C, D, E, F = stream.emplace(funcA, funcB, funcC, funcD, funcE, funcF)
 
    # define relationship betweeen functional nodes
-   A.precede(B, C)  # A executes before B and C
-   E.succeed(B, C, D)  # E executes after B, C and D
-   D.succeed(C)
-   F.succeed(E)
+   
+   # A executes before B and C
+   # output of A passed to B and C
+   A.precede(B, C, pipe=True) 
+   
+   # E executes after B, C and D
+   E.succeed(B, C, D)
 
+   # D executes after C
+   # D receives output of C
+   D.succeed(C, pipe=True)
+
+   F.succeed(E)
 
 
 Execute Dag
@@ -62,13 +72,12 @@ In console, following items are shown.
 
 .. code:: bash
 
-    funcA
-    funcC
-    funcB
-    funcD
-    funcE
-    funcF
-
+   funcA
+   funcB, received 10 from A
+   funcC, received 10 from A
+   funcD, received 20 from C
+   funcE
+   funcF
 
 When executing all functions in parallel, Use StreamParallelExecutor.
 
@@ -123,18 +132,17 @@ It is able to extract sub dag from whole one after defining relationship between
     executor.run()
 
     # output as same
-    drawer.output(functional_dag, "workspace/sample.mmd")
+    drawer.output(functional_dag, "workspace/extract.mmd")
 
 
 In console, following items are shown.
 
 .. code:: bash
 
-    funcA
-    funcC
-    funcB
-    funcD
-
+   funcA
+   funcB, received 10 from A
+   funcC, received 10 from A
+   funcD, received 20 from C
 
 Drawing by mermaid, sub-dag graph is shown below.
 
