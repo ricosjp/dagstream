@@ -23,20 +23,22 @@ Definition of Dag
 DagStream class convert your functions into dag nodes.
 
 .. code:: python
-   
+
    import dagstream
 
    def funcA():
       print("funcA")
+      return 10
 
-   def funcB():
-      print("funcB")
+   def funcB(val_from_A: int):
+      print(f"funcB, received {val_from_A} from A")
 
-   def funcC():
-      print("funcC")
+   def funcC(val_from_A: int):
+      print(f"funcC, received {val_from_A} from A")
+      return 20
 
-   def funcD():
-      print("funcD")
+   def funcD(val_from_C: int):
+      print(f"funcD, received {val_from_C} from C")
 
    def funcE():
       print("funcE")
@@ -50,10 +52,20 @@ DagStream class convert your functions into dag nodes.
    A, B, C, D, E, F = stream.emplace(funcA, funcB, funcC, funcD, funcE, funcF)
 
    # define relationship betweeen functional nodes
-   A.precede(B, C)  # A executes before B and C
-   E.succeed(B, C, D)  # E executes after B, C and D
-   D.succeed(C)
+   
+   # A executes before B and C
+   # output of A passed to B and C
+   A.precede(B, C, pipe=True) 
+   
+   # E executes after B, C and D
+   E.succeed(B, C, D)
+
+   # D executes after C
+   # D receives output of C
+   D.succeed(C, pipe=True)
+
    F.succeed(E)
+
 
 
 Relationship between functions are like below.
