@@ -128,3 +128,31 @@ def test__hash(create_nodes_relationship):
     assert hash(node1) == hash(node1)
     assert hash(node1) != hash(node2)
     assert hash(node1) != hash(node3)
+
+
+def test__user_function():
+    def sample1():
+        pass
+
+    def sample2():
+        pass
+
+    node1 = FunctionalNode(sample1)
+    node2 = FunctionalNode(sample2)
+
+    assert node1.get_user_function() == sample1
+    assert node2.get_user_function() == sample2
+
+
+@pytest.mark.parametrize(
+    "args", [("sample", 3, [2, 3, 4]), (2, 3, 4), ({"a": 2}, 4, (3, 4))]
+)
+def test__get_received_args(args):
+    def sample1():
+        ...
+
+    node1 = FunctionalNode(sample1)
+    for arg in args:
+        node1.receive_args(arg)
+
+    assert node1.get_received_args() == list(args)

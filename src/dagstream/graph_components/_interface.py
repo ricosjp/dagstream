@@ -79,6 +79,14 @@ class IFunctionalNode(IDrawableNode, metaclass=abc.ABCMeta):
         ...
 
     @abc.abstractmethod
+    def get_received_args(self) -> list[Any]:
+        ...
+
+    @abc.abstractmethod
+    def get_user_function(self) -> Any:
+        ...
+
+    @abc.abstractmethod
     def run(self, *args, **kwargs) -> Any:
         ...
 

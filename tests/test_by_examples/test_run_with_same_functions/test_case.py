@@ -47,9 +47,10 @@ def test__parallel_executor_with_pipe(construct_stream):
 
     executor = StreamParallelExecutor(functional_dag, n_process=2)
 
-    result = executor.run(first_args=(3,), inc=2)
+    result = executor.run(first_args=(3,), inc=2, save_all_state=True)
     actual = result["summation"]
 
+    assert len(result) == 4
     assert actual == 16
 
 
@@ -59,7 +60,8 @@ def test__single_pipe_dagstream(construct_stream):
     func_dag = stream.construct()
     executor = StreamExecutor(func_dag)
 
-    result = executor.run(first_args=(3,), inc=2)
+    result = executor.run(first_args=(3,), inc=2, save_all_state=True)
     actual = result["summation"]
 
+    assert len(result) == 4
     assert actual == 16

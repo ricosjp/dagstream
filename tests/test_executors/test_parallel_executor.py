@@ -97,7 +97,7 @@ def test__n_results_when_parallel_executor(
 
     executor = StreamParallelExecutor(functional_dag, n_process=2)
 
-    result = executor.run(0, save_state=save_state)
+    result = executor.run(0, save_all_state=save_state)
 
     assert len(result) == num_of_results
 
