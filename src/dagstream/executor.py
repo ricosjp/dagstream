@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 import multiprocessing as multi
-from typing import Any, Union
+from typing import Any
 
 from dagstream.graph_components import FunctionalDag
 
@@ -11,7 +13,8 @@ class StreamExecutor:
         Parameters
         ----------
         functional_dag : FunctionalDag
-            FunctionalDag instance which is already constructed from DagStream Object
+            FunctionalDag instance which is already
+             constructed from DagStream Object
 
         Raises
         ------
@@ -21,14 +24,15 @@ class StreamExecutor:
         if not isinstance(functional_dag, FunctionalDag):
             raise ValueError(
                 "functional_dag is not a instance of FunctionalDag. "
-                "Maybe, you forget to call 'your_dagstream.construct()' beforehand."
+                "Maybe, you forget to call 'your_dagstream.construct()'"
+                "  beforehand."
             )
         self._dag = functional_dag
 
     def run(
         self,
-        *args: Any,
-        first_args: Union[tuple[Any], None] = None,
+        *args: Any,  # noqa: ANN401
+        first_args: tuple[Any] | None = None,
         save_all_state: bool = False,
         **kwargs,
     ) -> dict[str, Any]:
@@ -39,7 +43,8 @@ class StreamExecutor:
         Returns
         -------
         dict[str, Any]
-            Key is name of function, value is returned objects from each function.
+            Key is name of function, value is returned objects
+              from each function.
         """
         results: dict[str, Any] = {}
 
@@ -63,13 +68,17 @@ class StreamExecutor:
 class StreamParallelExecutor:
     """Parallel Executor for FunctionalDag Object."""
 
-    def __init__(self, functional_dag: FunctionalDag, n_process: int = 1) -> None:
-        """THIS IS EXPERIMENTAL FEATURE. Parallel Executor for FunctionalDag Object.
+    def __init__(
+        self, functional_dag: FunctionalDag, n_process: int = 1
+    ) -> None:
+        """THIS IS EXPERIMENTAL FEATURE. Parallel Executor
+          for FunctionalDag Object.
 
         Parameters
         ----------
         functional_dag : FunctionalDag
-            FunctionalDag instance which is already constructed from DagStream Object
+            FunctionalDag instance which is already constructed
+              from DagStream Object
         n_processes : int, optional
             The number of processes to run in parallel, by default 1
 
@@ -81,18 +90,21 @@ class StreamParallelExecutor:
         if not isinstance(functional_dag, FunctionalDag):
             raise ValueError(
                 "functional_dag is not a instance of FunctionalDag. "
-                "Maybe, you forget to call 'your_dagstream.construct()' beforehand."
+                "Maybe, you forget to call 'your_dagstream.construct()'"
+                " beforehand."
             )
 
         self._dag = functional_dag
         self._n_processes = n_process
         if self._n_processes <= 0:
-            raise ValueError(f"n_processes must be larger than 0. Input: {n_process}")
+            raise ValueError(
+                f"n_processes must be larger than 0. Input: {n_process}"
+            )
 
     def run(
         self,
-        *args: Any,
-        first_args: Union[tuple[Any], None] = None,
+        *args: Any,  # noqa: ANN401
+        first_args: tuple[Any] | None = None,
         save_all_state: bool = False,
         **kwargs,
     ) -> dict[str, Any]:
@@ -104,7 +116,8 @@ class StreamParallelExecutor:
         Returns
         -------
         dict[str, Any]
-            Key is name of function, value is returned objects from each function.
+            Key is name of function, value is returned objects
+              from each function.
         """
         task_queue: multi.Queue = multi.Queue()
         done_queue: multi.Queue = multi.Queue()
@@ -125,7 +138,9 @@ class StreamParallelExecutor:
             # Start worker processes
             n_left_process = self._n_processes - len(all_processes)
             for _ in range(n_left_process):
-                process = multi.Process(target=_worker, args=(task_queue, done_queue))
+                process = multi.Process(
+                    target=_worker, args=(task_queue, done_queue)
+                )
                 process.start()
                 all_processes.append(process)
 

@@ -1,3 +1,4 @@
+from typing import Any
 from unittest import mock
 
 import pytest
@@ -65,7 +66,9 @@ def test__call_precede_when_succeed():
 
 
 @pytest.fixture
-def create_nodes_relationship():
+def create_nodes_relationship() -> tuple[
+    FunctionalNode, FunctionalNode, FunctionalNode
+]:
     def sample1():
         pass
 
@@ -92,7 +95,7 @@ def create_nodes_relationship():
 
 
 def test__precede_succeed_relationship(
-    create_nodes_relationship: tuple[FunctionalNode, ...]
+    create_nodes_relationship: tuple[FunctionalNode],
 ):
     node1, node2, node3 = create_nodes_relationship
 
@@ -114,7 +117,7 @@ def test_prepare():
     assert isinstance(state, node_state.ReadyNodeState)
 
 
-def test__n_successors(create_nodes_relationship: tuple[FunctionalNode, ...]):
+def test__n_successors(create_nodes_relationship: tuple[FunctionalNode]):
     node1, node2, node3 = create_nodes_relationship
 
     assert node1.n_successors == 2
@@ -122,7 +125,7 @@ def test__n_successors(create_nodes_relationship: tuple[FunctionalNode, ...]):
     assert node3.n_successors == 0
 
 
-def test__hash(create_nodes_relationship):
+def test__hash(create_nodes_relationship: tuple[FunctionalNode]):
     node1, node2, node3 = create_nodes_relationship
 
     assert hash(node1) == hash(node1)
@@ -147,9 +150,8 @@ def test__user_function():
 @pytest.mark.parametrize(
     "args", [("sample", 3, [2, 3, 4]), (2, 3, 4), ({"a": 2}, 4, (3, 4))]
 )
-def test__get_received_args(args):
-    def sample1():
-        ...
+def test__get_received_args(args: Any):  # noqa: ANN401
+    def sample1(): ...
 
     node1 = FunctionalNode(sample1)
     for arg in args:

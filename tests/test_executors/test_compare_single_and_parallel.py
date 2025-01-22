@@ -33,7 +33,7 @@ def confirm_cpu_count():
     assert os.cpu_count() >= 4
 
 
-def test__parallel_run_is_faster_than_single_run(confirm_cpu_count):
+def test__parallel_run_is_faster_than_single_run(confirm_cpu_count: None):
     stream_parallel = DagStream()
     # All nodes can be run in parallel
     stream_parallel.emplace(funcA, funcB, funcC, funcD)
@@ -55,7 +55,7 @@ def test__parallel_run_is_faster_than_single_run(confirm_cpu_count):
     assert abs(elapsed_time - elapsed_time_parallel * 4) < 1.0
 
 
-def test__can_run_in_parallel_with_orders(confirm_cpu_count):
+def test__can_run_in_parallel_with_orders(confirm_cpu_count: None):
     stream = DagStream()
     A, B, C, D, E = stream.emplace(funcA, funcB, funcC, funcD, funcE)
 

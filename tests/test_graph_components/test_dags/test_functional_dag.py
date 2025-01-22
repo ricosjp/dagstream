@@ -35,14 +35,16 @@ def create_functional_nodes() -> dict[str, FunctionalNode]:
     return {node.mut_name: node for node in nodes}
 
 
-def test__initialized(create_functional_nodes):
+def test__initialized(create_functional_nodes: dict[str, FunctionalNode]):
     with mock.patch.object(FunctionalNode, "prepare") as mocked:
         _ = FunctionalDag(create_functional_nodes)
 
         assert mocked.call_count == len(create_functional_nodes)
 
 
-def test__n_finished_when_initialized(create_functional_nodes: list[FunctionalNode]):
+def test__n_finished_when_initialized(
+    create_functional_nodes: list[FunctionalNode],
+):
     dag = FunctionalDag(create_functional_nodes)
     assert dag._n_finished == 0
 
@@ -85,7 +87,7 @@ def test__n_finished_when_done():
     assert dag._n_finished == 1
 
 
-def test__check_last(create_functional_nodes):
+def test__check_last(create_functional_nodes: dict[str, FunctionalNode]):
     dag = FunctionalDag(create_functional_nodes)
 
     assert dag.check_last("sample3")

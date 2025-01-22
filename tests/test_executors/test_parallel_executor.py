@@ -8,32 +8,32 @@ from dagstream.executor import StreamParallelExecutor, _worker
 from dagstream.graph_components.nodes import FunctionalNode
 
 
-def sample1(args: int):
+def sample1(args: int) -> int:
     return args + 1
 
 
-def sample2(args: int):
+def sample2(args: int) -> int:
     return args + 2
 
 
-def sample3(*args):
+def sample3(*args: int) -> int:
     return 3
 
 
-def sample4(*args):
+def sample4(*args: int) -> int:
     return 4
 
 
-def sample5(*args):
+def sample5(*args: int) -> int:
     return 5
 
 
-def sample6(*args):
+def sample6(*args: int) -> int:
     return 6
 
 
 @pytest.fixture
-def construct_stream():
+def construct_stream() -> tuple[DagStream, dict[str, FunctionalNode]]:
     stream = DagStream()
     node1, node2, node3, node4, node5, node6 = stream.emplace(
         sample1, sample2, sample3, sample4, sample5, sample6
@@ -56,12 +56,15 @@ def construct_stream():
     node4.precede(node5, node6)
 
     name2node = {
-        node.display_name: node for node in [node1, node2, node3, node4, node5, node6]
+        node.display_name: node
+        for node in [node1, node2, node3, node4, node5, node6]
     }
     return stream, name2node
 
 
-def test__cannot_initialize_before_calling_construct(construct_stream):
+def test__cannot_initialize_before_calling_construct(
+    construct_stream: tuple[DagStream, dict[str, FunctionalNode]],
+):
     stream, _ = construct_stream
 
     with pytest.raises(ValueError):
@@ -69,7 +72,10 @@ def test__cannot_initialize_before_calling_construct(construct_stream):
 
 
 @pytest.mark.parametrize("n_process", [-1, 0, -100])
-def test__not_allowed_non_positive_n_process(n_process, construct_stream):
+def test__not_allowed_non_positive_n_process(
+    n_process: int,
+    construct_stream: tuple[DagStream, dict[str, FunctionalNode]],
+):
     stream, _ = construct_stream
 
     functional_dag = stream.construct()
@@ -87,7 +93,10 @@ def test__not_allowed_non_positive_n_process(n_process, construct_stream):
     ],
 )
 def test__n_results_when_parallel_executor(
-    mandatory_names, num_of_results, save_state, construct_stream
+    mandatory_names: list[str],
+    num_of_results: int,
+    save_state: bool,
+    construct_stream: tuple[DagStream, dict[str, FunctionalNode]],
 ):
     assert os.cpu_count() > 2
     stream, name2node = construct_stream
@@ -114,7 +123,7 @@ def test__n_results_when_parallel_executor(
         ([(sample1, (4,), {}), (sample2, (5,), {})], [5, 7]),
     ],
 )
-def test__worker(inputs, expected):
+def test__worker(inputs: tuple, expected: list):
     input_queue = multi.Queue()
     done_queue = multi.Queue()
 

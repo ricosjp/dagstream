@@ -8,16 +8,16 @@ from dagstream.executor import StreamExecutor, StreamParallelExecutor
 from dagstream.viewers import MermaidDrawer
 
 
-def increment(val: int, *, inc: int = 1):
+def increment(val: int, *, inc: int = 1) -> int:
     return val + inc
 
 
-def summation(*val: int, **kwards):
+def summation(*val: int, **kwards) -> int:
     return sum(val)
 
 
 @pytest.fixture
-def construct_stream():
+def construct_stream() -> DagStream:
     stream = DagStream()
     funcA0, funcA1, funcA2, funcB = stream.emplace(
         increment, increment, increment, summation
@@ -30,7 +30,7 @@ def construct_stream():
     return stream
 
 
-def test__output_figure(construct_stream):
+def test__output_figure(construct_stream: DagStream):
     stream: DagStream = construct_stream
     viewer = MermaidDrawer()
 
@@ -40,7 +40,7 @@ def test__output_figure(construct_stream):
     viewer.output(dag, file_path=output_file_path)
 
 
-def test__parallel_executor_with_pipe(construct_stream):
+def test__parallel_executor_with_pipe(construct_stream: DagStream):
     assert os.cpu_count() > 2
     stream = construct_stream
     functional_dag = stream.construct()
@@ -54,7 +54,7 @@ def test__parallel_executor_with_pipe(construct_stream):
     assert actual == 16
 
 
-def test__single_pipe_dagstream(construct_stream):
+def test__single_pipe_dagstream(construct_stream: DagStream):
     stream = construct_stream
 
     func_dag = stream.construct()

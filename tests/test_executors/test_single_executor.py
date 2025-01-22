@@ -1,35 +1,41 @@
+from typing import TypeVar
+
 import pytest
 
 from dagstream import DagStream
 from dagstream.executor import StreamExecutor
+from dagstream.graph_components import IFunctionalNode
+
+T1 = TypeVar("T1")
+T2 = TypeVar("T2")
 
 
-def sample1(*args, **kwards):
+def sample1(*args: T1, **kwards: T2) -> tuple[T1, T2]:
     return args, kwards
 
 
-def sample2(*args, **kwards):
+def sample2(*args: T1, **kwards: T2) -> tuple[T1, T2]:
     return args, kwards
 
 
-def sample3(*args, **kwards):
+def sample3(*args: T1, **kwards: T2) -> tuple[T1, T2]:
     return args, kwards
 
 
-def sample4(*args, **kwards):
+def sample4(*args: T1, **kwards: T2) -> tuple[T1, T2]:
     return args, kwards
 
 
-def sample5(*args, **kwards):
+def sample5(*args: T1, **kwards: T2) -> tuple[T1, T2]:
     return args, kwards
 
 
-def sample6(*args, **kwards):
+def sample6(*args: T1, **kwards: T2) -> tuple[T1, T2]:
     return args, kwards
 
 
 @pytest.fixture
-def construct_stream():
+def construct_stream() -> tuple[DagStream, dict[str, IFunctionalNode]]:
     stream = DagStream()
     node1, node2, node3, node4, node5, node6 = stream.emplace(
         sample1, sample2, sample3, sample4, sample5, sample6
@@ -51,12 +57,15 @@ def construct_stream():
     node5.precede(node6)
 
     name2node = {
-        node.display_name: node for node in [node1, node2, node3, node4, node5, node6]
+        node.display_name: node
+        for node in [node1, node2, node3, node4, node5, node6]
     }
     return stream, name2node
 
 
-def test__cannot_initialize_before_calling_construct(construct_stream):
+def test__cannot_initialize_before_calling_construct(
+    construct_stream: tuple[DagStream, dict[str, IFunctionalNode]],
+):
     stream, _ = construct_stream
 
     with pytest.raises(ValueError):
@@ -74,7 +83,10 @@ def test__cannot_initialize_before_calling_construct(construct_stream):
     ],
 )
 def test__n_results_when_parallel_executor(
-    mandatory_names, num_of_results, save_all_state, construct_stream
+    mandatory_names: list[str],
+    num_of_results: int,
+    save_all_state: bool,
+    construct_stream: tuple[DagStream, dict[str, IFunctionalNode]],
 ):
     stream, name2node = construct_stream
 
@@ -97,7 +109,12 @@ def test__n_results_when_parallel_executor(
         (["sample2"], (1, 5), ["sample1"]),
     ],
 )
-def test__pass_first_args(mandatory_names, first_args, first_names, construct_stream):
+def test__pass_first_args(
+    mandatory_names: list[int] | None,
+    first_args: tuple[int],
+    first_names: list[str],
+    construct_stream: tuple[DagStream, dict[str, IFunctionalNode]],
+):
     stream, name2node = construct_stream
 
     if mandatory_names is None:
@@ -117,7 +134,12 @@ def test__pass_first_args(mandatory_names, first_args, first_names, construct_st
     "mandatory_names, args, kwards",
     [(["sample4"], (1,), {"a": 3}), (None, (11, 12, 13), {"sample": 12})],
 )
-def test__pass_common_args(mandatory_names, args, kwards, construct_stream):
+def test__pass_common_args(
+    mandatory_names: list[str],
+    args: tuple[int],
+    kwards: dict[str, int],
+    construct_stream: tuple[DagStream, dict[str, IFunctionalNode]],
+):
     stream, name2node = construct_stream
 
     if mandatory_names is None:
