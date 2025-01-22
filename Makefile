@@ -1,24 +1,4 @@
-RUN = poetry run
 
-.PHONY: black-check
-black-check:
-	poetry run black --check src tests
-
-.PHONY: black
-black:
-	poetry run black src tests
-
-.PHONY: flake8
-flake8:
-	poetry run flake8 src tests
-
-.PHONY: isort-check
-isort-check:
-	poetry run isort --check-only src tests
-
-.PHONY: isort
-isort:
-	poetry run isort src tests
 
 .PHONY: mdformat
 mdformat:
@@ -32,23 +12,28 @@ mdformat-check:
 mypy:
 	poetry run mypy src
 
+.PHONY: install_dev
+install_dev:
+	poetry install --sync --with dev
+
+
 .PHONY: test
 test:
 	poetry run pytest tests --cov=src --cov-report term-missing --durations 5
 
-.PHONY: format
-format:
-	$(MAKE) black
-	$(MAKE) isort
-	$(MAKE) mdformat
 
 .PHONY: lint
 lint:
-	$(MAKE) black-check
-	$(MAKE) isort-check
+	poetry run python3 -m ruff check --output-format=full
+	poetry run python3 -m ruff format --diff
 	$(MAKE) mdformat-check
-	$(MAKE) flake8
 	$(MAKE) mypy
+
+.PHONY: format
+format:
+	poetry run python3 -m ruff format
+	poetry run python3 -m ruff check --fix
+	$(MAKE) mdformat
 
 .PHONY: test-all
 test-all:
@@ -60,4 +45,4 @@ test-all:
 document:
 	rm -rf docs/source/reference/generated || true
 	rm -rf public/*
-	$(RUN) sphinx-build -b html docs/source public/
+	poetry run sphinx-build -b html docs/source public/
