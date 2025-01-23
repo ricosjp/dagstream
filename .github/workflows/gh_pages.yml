@@ -21,7 +21,7 @@ jobs:
           apt install -y make git
           pip install poetry
           poetry config virtualenvs.in-project false
-          poetry install
+          poetry install --with dev
 
       - name: build_pages
         shell: bash
