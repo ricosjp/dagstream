@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from typing import Any, Callable, Iterable, Union
+from collections.abc import Callable, Iterable
+from typing import Any
 
 from dagstream import utils
 from dagstream.graph_components._interface import (
@@ -19,7 +20,10 @@ from dagstream.graph_components.nodes.node_state import ReadyNodeState
 
 class FunctionalNode(IFunctionalNode, IDrawableNode):
     def __init__(
-        self, user_function: Callable, *, mut_node_name: Union[str, None] = None
+        self,
+        user_function: Callable[[Any], Any],
+        *,
+        mut_node_name: str | None = None,
     ) -> None:
         self._user_function = user_function
         self._from: set[str] = set()
@@ -70,10 +74,10 @@ class FunctionalNode(IFunctionalNode, IDrawableNode):
         self.__received = []
         return ReadyNodeState(self.n_predecessors)
 
-    def receive_args(self, val: Any) -> None:
+    def receive_args(self, val: Any) -> None:  # noqa: ANN401
         self.__received.append(val)
 
-    def get_user_function(self) -> Any:
+    def get_user_function(self) -> Callable[[Any], Any]:
         return self._user_function
 
     def get_received_args(self) -> list[Any]:
@@ -96,6 +100,6 @@ class FunctionalNode(IFunctionalNode, IDrawableNode):
             self._from.add(node.mut_name)
             node.precede(self, pipe=pipe)
 
-    def run(self, *args, **kwargs):
+    def run(self, *args: Any, **kwargs: Any) -> Any:  # noqa: ANN401
         result = self._user_function(*self.__received, *args, **kwargs)
         return result

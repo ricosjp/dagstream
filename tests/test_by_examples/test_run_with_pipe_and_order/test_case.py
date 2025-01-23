@@ -8,24 +8,24 @@ from dagstream.executor import StreamExecutor, StreamParallelExecutor
 from dagstream.viewers import MermaidDrawer
 
 
-def A(vals: list[int], offset: int):
+def A(vals: list[int], offset: int) -> list[int]:
     return [v + offset for v in vals]
 
 
-def B(output_by_A: list[int]):
+def B(output_by_A: list[int]) -> int:
     return sum(output_by_A)
 
 
-def C(output_by_B: int):
+def C(output_by_B: int) -> int:
     return output_by_B + 10
 
 
-def D(*output_by_C: list[int]):
+def D(*output_by_C: list[int]) -> int:
     return sum(output_by_C)
 
 
 @pytest.fixture
-def construct_stream():
+def construct_stream() -> DagStream:
     stream = DagStream()
     funcA, funcB, funcC, funcD = stream.emplace(A, B, C, D)
 
@@ -38,7 +38,7 @@ def construct_stream():
     return stream
 
 
-def test__output_figure(construct_stream):
+def test__output_figure(construct_stream: DagStream):
     stream: DagStream = construct_stream
     viewer = MermaidDrawer()
 
@@ -48,7 +48,7 @@ def test__output_figure(construct_stream):
     viewer.output(dag, file_path=output_file_path)
 
 
-def test__parallel_executor_with_pipe(construct_stream):
+def test__parallel_executor_with_pipe(construct_stream: DagStream):
     assert os.cpu_count() > 2
     stream = construct_stream
     functional_dag = stream.construct()
@@ -61,7 +61,7 @@ def test__parallel_executor_with_pipe(construct_stream):
     assert actual == 19
 
 
-def test__pipe_dagstream(construct_stream):
+def test__pipe_dagstream(construct_stream: DagStream):
     stream = construct_stream
 
     func_dag = stream.construct()

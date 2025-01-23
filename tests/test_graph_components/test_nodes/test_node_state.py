@@ -1,6 +1,9 @@
 import pytest
 
-from dagstream.graph_components.nodes.node_state import ReadyNodeState, UnReadyNodeState
+from dagstream.graph_components.nodes.node_state import (
+    ReadyNodeState,
+    UnReadyNodeState,
+)
 from dagstream.utils.errors import DagStreamNotReadyError
 
 

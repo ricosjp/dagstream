@@ -1,11 +1,13 @@
+from __future__ import annotations
+
 import abc
 import pathlib
-from typing import Union
 
 from dagstream.graph_components import IDrawableGraph
 
 
 class IDrawer(metaclass=abc.ABCMeta):
+    @abc.abstractmethod
     def output(self, graph: IDrawableGraph, file_path: pathlib.Path) -> None:
         raise NotImplementedError()
 
@@ -16,7 +18,7 @@ class MermaidDrawer(IDrawer):
         self._dir = "LR"
 
     def output(
-        self, graph: IDrawableGraph, file_path: Union[pathlib.Path, str]
+        self, graph: IDrawableGraph, file_path: pathlib.Path | str
     ) -> None:
         """output content to file_path
 
@@ -40,12 +42,14 @@ class MermaidDrawer(IDrawer):
             name2id[node.mut_name] = (state_name := f"state_{i}")
             context.append(f'state "{node.display_name}" as {state_name}')
 
-        for i, node in enumerate(nodes):
+        for _, node in enumerate(nodes):
             state_name = name2id[node.mut_name]
             if node.n_predecessors == 0:
                 context.append(f"[*] --> {state_name}")
 
-            succesors = [v for v in node.successors if graph.check_exists(v.to_node)]
+            succesors = [
+                v for v in node.successors if graph.check_exists(v.to_node)
+            ]
             if len(succesors) == 0:
                 context.append(f"{state_name} --> [*]")
                 continue

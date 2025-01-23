@@ -1,4 +1,6 @@
-from typing import Callable, Iterable, Optional, Union
+from __future__ import annotations
+
+from collections.abc import Callable, Iterable
 
 from dagstream import utils
 from dagstream.graph_components import (
@@ -18,7 +20,7 @@ class DagStream(IDrawableGraph):
         # between nodes which have the same function name
         self._SAME_NAME_COUNTER: dict[str, int] = {}
 
-    def check_exists(self, node: Union[str, IFunctionalNode]) -> bool:
+    def check_exists(self, node: str | IFunctionalNode) -> bool:
         if isinstance(node, IFunctionalNode):
             return node.mut_name in self._name2node
 
@@ -66,17 +68,19 @@ class DagStream(IDrawableGraph):
         return node_name
 
     def construct(
-        self, mandatory_nodes: Optional[set[IFunctionalNode]] = None
+        self, mandatory_nodes: set[IFunctionalNode] | None = None
     ) -> FunctionalDag:
         """create functional dag
 
-        Solving dependencies and create dag structure composed of functional nodes
+        Solving dependencies and create dag structure composed
+          of functional nodes
 
         Parameters
         ----------
         mandatory_nodes : Optional[set[IFunctionalNode]], optional
             If fed, extract sub 'minimum' graph to include mandatory_nodes.
-            If not fed, all functional nodes are included to graph. by default None
+            If not fed, all functional nodes are included to graph.
+              by default None
 
         Returns
         -------
@@ -102,13 +106,15 @@ class DagStream(IDrawableGraph):
         return visited
 
     def _extract_subdag(
-        self, mandatory_node: IFunctionalNode, visited: dict[str, IFunctionalNode]
+        self,
+        mandatory_node: IFunctionalNode,
+        visited: dict[str, IFunctionalNode],
     ):
         if mandatory_node.mut_name in visited:
             return
 
         visited.update({mandatory_node.mut_name: mandatory_node})
-        predecessors: list[str] = [v for v in mandatory_node.predecessors]
+        predecessors: list[str] = list(mandatory_node.predecessors)
 
         while len(predecessors) != 0:
             node_name = predecessors.pop()
@@ -144,7 +150,9 @@ class DagStream(IDrawableGraph):
                 continue
 
             if (node.mut_name in seen) and (node.mut_name not in finished):
-                raise DagStreamCycleError("Detect cycle in your definition of dag.")
+                raise DagStreamCycleError(
+                    "Detect cycle in your definition of dag."
+                )
 
             seen.add(node.mut_name)
             self._dfs_detect_cycle(node, finished, seen)

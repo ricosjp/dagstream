@@ -32,7 +32,7 @@ def test__emplace():
 
 
 @pytest.fixture
-def setup_dagstream():
+def setup_dagstream() -> tuple[DagStream, dict[str, FunctionalNode]]:
     def A():
         pass
 
@@ -70,7 +70,8 @@ def setup_nodes_relationship(
     [({"A": ["B", "C"], "B": ["E"], "C": ["E", "D"], "D": ["E"], "E": ["F"]})],
 )
 def test__exist_all_nodes_when_construct(
-    relationship, setup_dagstream: tuple[DagStream, dict[str, FunctionalNode]]
+    relationship: dict[str, list[str]],
+    setup_dagstream: tuple[DagStream, dict[str, FunctionalNode]],
 ):
     stream, name2node = setup_dagstream
     setup_nodes_relationship(relationship, name2node)
@@ -87,7 +88,8 @@ def test__exist_all_nodes_when_construct(
     [({"A": ["B", "C"], "B": ["E"], "C": ["E", "D"], "D": ["E"], "E": ["F"]})],
 )
 def test__get_drawable_nodes(
-    relationship, setup_dagstream: tuple[DagStream, dict[str, FunctionalNode]]
+    relationship: dict[str, list[str]],
+    setup_dagstream: tuple[DagStream, dict[str, FunctionalNode]],
 ):
     stream, name2node = setup_dagstream
     setup_nodes_relationship(relationship, name2node)
@@ -107,7 +109,8 @@ def test__get_drawable_nodes(
     ],
 )
 def test__detect_cycle(
-    relationship, setup_dagstream: tuple[DagStream, dict[str, FunctionalNode]]
+    relationship: dict[str, list[str]],
+    setup_dagstream: tuple[DagStream, dict[str, FunctionalNode]],
 ):
     stream, name2node = setup_dagstream
     setup_nodes_relationship(relationship, name2node)
@@ -117,7 +120,7 @@ def test__detect_cycle(
 
 
 def test__call_count_when_construct(
-    setup_dagstream: tuple[DagStream, dict[str, FunctionalNode]]
+    setup_dagstream: tuple[DagStream, dict[str, FunctionalNode]],
 ):
     stream, _ = setup_dagstream
 
@@ -128,7 +131,8 @@ def test__call_count_when_construct(
 
 @pytest.mark.parametrize("mandatory_nodes", [(["A", "B"])])
 def test__call_count_when_construct_with_mandatory(
-    mandatory_nodes, setup_dagstream: tuple[DagStream, dict[str, FunctionalNode]]
+    mandatory_nodes: list[str],
+    setup_dagstream: tuple[DagStream, dict[str, FunctionalNode]],
 ):
     stream, _ = setup_dagstream
 
@@ -141,14 +145,20 @@ def test__call_count_when_construct_with_mandatory(
     "relationship, necessary_nodes",
     [
         (
-            {"A": ["B", "C"], "B": ["E"], "C": ["E", "D"], "D": ["E"], "E": ["F"]},
+            {
+                "A": ["B", "C"],
+                "B": ["E"],
+                "C": ["E", "D"],
+                "D": ["E"],
+                "E": ["F"],
+            },
             ["A", "C"],
         )
     ],
 )
 def test__is_exist_node_when_extracting_functions(
-    relationship,
-    necessary_nodes,
+    relationship: dict[str, list[str]],
+    necessary_nodes: list[str],
     setup_dagstream: tuple[DagStream, dict[str, FunctionalNode]],
 ):
     stream, name2node = setup_dagstream
@@ -164,41 +174,77 @@ def test__is_exist_node_when_extracting_functions(
     "relationship, necessary_nodes, contain_nodes",
     [
         (
-            {"A": ["B", "C"], "B": ["E"], "C": ["E", "D"], "D": ["E"], "E": ["F"]},
+            {
+                "A": ["B", "C"],
+                "B": ["E"],
+                "C": ["E", "D"],
+                "D": ["E"],
+                "E": ["F"],
+            },
             ["A"],
             ["A"],
         ),
         (
-            {"A": ["B", "C"], "B": ["E"], "C": ["E", "D"], "D": ["E"], "E": ["F"]},
+            {
+                "A": ["B", "C"],
+                "B": ["E"],
+                "C": ["E", "D"],
+                "D": ["E"],
+                "E": ["F"],
+            },
             ["A", "C"],
             ["A", "C"],
         ),
         (
-            {"A": ["B", "C"], "B": ["E"], "C": ["E", "D"], "D": ["E"], "E": ["F"]},
+            {
+                "A": ["B", "C"],
+                "B": ["E"],
+                "C": ["E", "D"],
+                "D": ["E"],
+                "E": ["F"],
+            },
             ["E"],
             ["A", "B", "C", "D", "E"],
         ),
         (
-            {"A": ["B", "C"], "B": ["E"], "C": ["E", "D"], "D": ["E"], "E": ["F"]},
+            {
+                "A": ["B", "C"],
+                "B": ["E"],
+                "C": ["E", "D"],
+                "D": ["E"],
+                "E": ["F"],
+            },
             ["D"],
             ["A", "C", "D"],
         ),
         (
-            {"A": ["B", "C"], "B": ["E"], "C": ["E", "D"], "D": ["E"], "E": ["F"]},
+            {
+                "A": ["B", "C"],
+                "B": ["E"],
+                "C": ["E", "D"],
+                "D": ["E"],
+                "E": ["F"],
+            },
             ["F"],
             ["A", "B", "C", "D", "E", "F"],
         ),
         (
-            {"A": ["B", "C"], "B": ["E"], "C": ["E", "D"], "D": ["E"], "E": ["F"]},
+            {
+                "A": ["B", "C"],
+                "B": ["E"],
+                "C": ["E", "D"],
+                "D": ["E"],
+                "E": ["F"],
+            },
             ["A", "C", "F"],
             ["A", "B", "C", "D", "E", "F"],
         ),
     ],
 )
 def test__is_subdag_graph_when_extracting(
-    relationship,
-    necessary_nodes,
-    contain_nodes,
+    relationship: dict[str, list[str]],
+    necessary_nodes: list[str],
+    contain_nodes: list[str],
     setup_dagstream: tuple[DagStream, dict[str, FunctionalNode]],
 ):
     stream, name2node = setup_dagstream
@@ -213,7 +259,7 @@ def test__is_subdag_graph_when_extracting(
 
 
 def test__emplate_multiple_times(
-    setup_dagstream: tuple[DagStream, dict[str, FunctionalNode]]
+    setup_dagstream: tuple[DagStream, dict[str, FunctionalNode]],
 ):
     stream, _ = setup_dagstream
     n_functions = len(stream._name2node)
@@ -225,9 +271,10 @@ def test__emplate_multiple_times(
     assert len(stream._name2node) == n_functions + 1
 
 
-def test__emplace_same_function_multiple_times(setup_dagstream):
-    def sample1():
-        ...
+def test__emplace_same_function_multiple_times(
+    setup_dagstream: tuple[DagStream, dict[str, FunctionalNode]],
+):
+    def sample1(): ...
 
     stream = DagStream()
     _ = stream.emplace(sample1)

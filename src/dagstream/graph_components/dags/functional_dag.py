@@ -1,4 +1,7 @@
-from typing import Any, Iterable, Union
+from __future__ import annotations
+
+from collections.abc import Iterable
+from typing import Any
 
 from dagstream.graph_components._interface import (
     IDrawableNode,
@@ -25,10 +28,12 @@ class FunctionalDag(IDrawableGraph):
         ]
 
         self._last_node_names: set[str] = {
-            node.mut_name for node in name2nodes.values() if self._is_last_node(node)
+            node.mut_name
+            for node in name2nodes.values()
+            if self._is_last_node(node)
         }
 
-    def _is_last_node(self, node: IFunctionalNode):
+    def _is_last_node(self, node: IFunctionalNode) -> bool:
         n_successors = sum(
             [1 for edge in node.successors if edge.to_node in self._name2nodes]
         )
@@ -45,7 +50,7 @@ class FunctionalDag(IDrawableGraph):
         """
         return self._n_finished < self._n_functions
 
-    def check_last(self, node: Union[str, IFunctionalNode]):
+    def check_last(self, node: str | IFunctionalNode) -> bool:
         if isinstance(node, str):
             return node in self._last_node_names
 
@@ -54,7 +59,7 @@ class FunctionalDag(IDrawableGraph):
 
         raise NotImplementedError()
 
-    def check_exists(self, node: Union[IFunctionalNode, str]) -> bool:
+    def check_exists(self, node: IFunctionalNode | str) -> bool:
         """Chech whether node exists in this functional dag.
 
         Parameters
@@ -82,7 +87,7 @@ class FunctionalDag(IDrawableGraph):
         self._ready_nodes.clear()
         return result
 
-    def send(self, node_name: str, result: Any) -> None:
+    def send(self, node_name: str, result: Any) -> None:  # noqa: ANN401
         node = self._name2nodes[node_name]
 
         for edge in node.successors:

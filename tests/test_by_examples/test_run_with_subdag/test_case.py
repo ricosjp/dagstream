@@ -5,35 +5,36 @@ import pytest
 
 from dagstream import DagStream
 from dagstream.executor import StreamExecutor, StreamParallelExecutor
+from dagstream.graph_components import IFunctionalNode
 from dagstream.viewers import MermaidDrawer
 
 
-def sample1(args: int):
+def sample1(args: int) -> int:
     return args + 10
 
 
-def sample2(args: int):
+def sample2(args: int) -> int:
     return args + 2
 
 
-def sample3(*args: int):
+def sample3(*args: int) -> int:
     return sum(args)
 
 
-def sample4(args: int):
+def sample4(args: int) -> int:
     return args
 
 
-def sample5(args: int):
+def sample5(args: int) -> int:
     return args + 1
 
 
-def sample6(args: int):
+def sample6(args: int) -> int:
     return args + 3
 
 
 @pytest.fixture
-def construct_stream():
+def construct_stream() -> tuple[DagStream, dict[str, IFunctionalNode]]:
     stream = DagStream()
     node1, node2, node3, node4, node5, node6 = stream.emplace(
         sample1, sample2, sample3, sample4, sample5, sample6
@@ -55,12 +56,15 @@ def construct_stream():
     node5.precede(node6, pipe=True)
 
     name2node = {
-        node.mut_name: node for node in [node1, node2, node3, node4, node5, node6]
+        node.mut_name: node
+        for node in [node1, node2, node3, node4, node5, node6]
     }
     return stream, name2node
 
 
-def test__output_figure(construct_stream):
+def test__output_figure(
+    construct_stream: tuple[DagStream, dict[str, IFunctionalNode]],
+):
     stream, _ = construct_stream
     viewer = MermaidDrawer()
 
@@ -75,7 +79,10 @@ def test__output_figure(construct_stream):
     [(["sample4"], (2,), 2), (["sample5"], (5,), 6), (None, (1,), 29)],
 )
 def test__n_results_when_parallel_executor(
-    mandatory_names, first_args, expected, construct_stream
+    mandatory_names: list[str],
+    first_args: tuple,
+    expected: int,
+    construct_stream: tuple[DagStream, dict[str, IFunctionalNode]],
 ):
     assert os.cpu_count() > 2
     stream, name2node = construct_stream
@@ -101,7 +108,10 @@ def test__n_results_when_parallel_executor(
     [(["sample4"], (2,), 2), (["sample5"], (5,), 6), (None, (1,), 29)],
 )
 def test__n_results_when_single_executor(
-    mandatory_names, first_args, expected, construct_stream
+    mandatory_names: list[str],
+    first_args: tuple,
+    expected: int,
+    construct_stream: tuple[DagStream, dict[str, IFunctionalNode]],
 ):
     stream, name2node = construct_stream
 
