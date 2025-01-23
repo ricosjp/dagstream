@@ -1,4 +1,5 @@
 stages:
+  - lint
   - test
   - deploy
 
@@ -9,10 +10,10 @@ default:
     - apt install -y make
     - pip install poetry
     - poetry config virtualenvs.in-project false
-    - poetry install
+    - poetry install --with dev
 
 lint:
-  stage: test
+  stage: lint
   script:
     - make lint
   tags:
@@ -47,7 +48,6 @@ pages:
       - public
   only:
     - main
-    - develop
     - fix_sphinx
 
 

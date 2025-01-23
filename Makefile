@@ -1,5 +1,7 @@
 
 
+VERSION=`poetry version --short`
+
 .PHONY: mdformat
 mdformat:
 	poetry run mdformat *.md
