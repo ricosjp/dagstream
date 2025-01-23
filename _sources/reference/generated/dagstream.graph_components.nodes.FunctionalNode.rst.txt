@@ -1,0 +1,40 @@
+﻿dagstream.graph\_components.nodes.FunctionalNode
+================================================
+
+.. currentmodule:: dagstream.graph_components.nodes
+
+.. autoclass:: FunctionalNode
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~FunctionalNode.__init__
+      ~FunctionalNode.get_received_args
+      ~FunctionalNode.get_user_function
+      ~FunctionalNode.precede
+      ~FunctionalNode.prepare
+      ~FunctionalNode.receive_args
+      ~FunctionalNode.run
+      ~FunctionalNode.succeed
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~FunctionalNode.display_name
+      ~FunctionalNode.mut_name
+      ~FunctionalNode.n_predecessors
+      ~FunctionalNode.n_successors
+      ~FunctionalNode.predecessors
+      ~FunctionalNode.successors
+   
+   
