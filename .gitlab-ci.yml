@@ -4,28 +4,63 @@ stages:
   - deploy
 
 default:
-  image: python:3.9-slim
+  image: python:3.12-slim
   before_script:
     - apt update
     - apt install -y make
-    - pip install poetry
-    - poetry config virtualenvs.in-project false
-    - poetry install --with dev
+    - pip install uv
 
 lint:
   stage: lint
+  image: python:3.10-slim
+  before_script:
+    - apt update
+    - apt install -y make
+    - pip install uv
+  dependencies: []
   script:
     - make lint
   tags:
     - no-gpu
 
-pytest:
+
+pytest-py310:
+  stage: test
+  image: python:3.10-slim
+  before_script:
+    - apt update
+    - apt install -y make
+    - pip install uv
+  dependencies: []
+  script:
+    - make test
+  tags:
+    - no-gpu
+    - GenuineIntel
+
+
+pytest-py311:
+  stage: test
+  image: python:3.11-slim
+  before_script:
+    - apt update
+    - apt install -y make
+    - pip install uv
+  script:
+    - make test
+  dependencies: []
+  tags:
+    - no-gpu
+    - GenuineIntel
+
+pytest-py312:
   stage: test
   script:
-    - poetry run pytest tests --cov=src --cov-report term-missing
-    - poetry run python3 -m coverage html -d coverage
-    - poetry run python3 -m coverage xml
+    - uv run pytest tests --cov=src --cov-report term-missing
+    - uv run python3 -m coverage html -d coverage
+    - uv run python3 -m coverage xml
   coverage: '/(?i)total.*? (100(?:\.0+)?\%|[1-9]?\d(?:\.\d+)?\%)$/'
+  dependencies: []
   artifacts:
     expose_as: coverage
     paths:
@@ -38,11 +73,11 @@ pytest:
     - no-gpu
     - GenuineIntel
 
-
 pages:
   stage: deploy
   script:
     - make document
+  dependencies: []
   artifacts:
     paths:
       - public
@@ -54,18 +89,19 @@ pages:
 .deploy:wheel:
   stage: deploy
   script:
-    - poetry version $VERSION
-    - poetry config repositories.ricos https://pypi.ritc.jp
-    - poetry build -f wheel
-    - poetry publish --username ricos --password $RICOS_PYPI_KEY -r ricos --no-ansi -n -v
-    - poetry publish --username __token__ --password $PYPI_PUBLISH_TOKEN --no-ansi -n -v
+    - uv version $VERSION
+    - uv config repositories.ricos https://pypi.ritc.jp
+    - uv build -f wheel
+    - uv publish --username ricos --password $RICOS_PYPI_KEY -r ricos --no-ansi -n -v
+    - uv publish --username __token__ --password $PYPI_PUBLISH_TOKEN --no-ansi -n -v
 
 
 deploy:wheel:tags:
   image: python:3.9-slim
   extends: .deploy:wheel
+  dependencies: []
   before_script:
-    - pip install poetry
+    - pip install uv
     - export VERSION=$CI_COMMIT_REF_NAME
   only:
     - tags

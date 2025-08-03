@@ -1,40 +1,47 @@
 
 
-VERSION=`poetry version --short`
+VERSION=`uv version --short`
+
+
+.PHONY: reset
+reset:
+	rm -r ./.venv || true
+	rm uv.lock || true
+
 
 .PHONY: mdformat
 mdformat:
-	poetry run mdformat *.md
+	uv run mdformat *.md
 
 .PHONY: mdformat-check
 mdformat-check:
-	poetry run mdformat --check *.md
+	uv run mdformat --check *.md
 
 .PHONY: mypy
 mypy:
-	poetry run mypy src
+	uv run mypy src
 
 .PHONY: install_dev
 install_dev:
-	poetry install --sync --with dev
+	uv sync --group dev
 
 
 .PHONY: test
 test:
-	poetry run pytest tests --cov=src --cov-report term-missing --durations 5
+	uv run pytest tests --cov=src --cov-report term-missing --durations 5
 
 
 .PHONY: lint
 lint:
-	poetry run python3 -m ruff check --output-format=full
-	poetry run python3 -m ruff format --diff
+	uv run ruff check --output-format=full
+	uv run ruff format --diff
 	$(MAKE) mdformat-check
 	$(MAKE) mypy
 
 .PHONY: format
 format:
-	poetry run python3 -m ruff format
-	poetry run python3 -m ruff check --fix
+	uv run ruff format
+	uv run ruff check --fix
 	$(MAKE) mdformat
 
 .PHONY: test-all
@@ -47,4 +54,4 @@ test-all:
 document:
 	rm -rf docs/source/reference/generated || true
 	rm -rf public/*
-	poetry run sphinx-build -b html docs/source public/
+	uv run sphinx-build -b html docs/source public/

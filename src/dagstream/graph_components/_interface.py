@@ -30,7 +30,7 @@ class IFunctionalNode(IDrawableNode, metaclass=abc.ABCMeta):
 
     @display_name.setter
     @abc.abstractmethod
-    def display_name(self) -> None: ...
+    def display_name(self, value: str) -> None: ...
 
     @property
     @abc.abstractmethod
