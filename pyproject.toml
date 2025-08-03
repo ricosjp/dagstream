@@ -3,7 +3,7 @@ name = "dagstream"
 version = "0.1.6"
 description = ""
 authors = [{ name = "sakamoto", email = "sakamoto@ricos.co.jp" }]
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 readme = "README.md"
 license = "Apache-2.0"
 classifiers = []
@@ -92,8 +92,8 @@ exclude = [
 line-length = 80
 indent-width = 4
 
-# Assume Python 3.12
-target-version = "py312"
+# Assume Python 3.10
+target-version = "py310"
 
 [tool.ruff.lint]
 # Enable Pyflakes (`F`) and a subset of the pycodestyle (`E`)  codes by default.

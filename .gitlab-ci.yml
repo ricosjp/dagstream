@@ -12,18 +12,55 @@ default:
 
 lint:
   stage: lint
+  image: python:3.10-slim
+  before_script:
+    - apt update
+    - apt install -y make
+    - pip install uv
+  dependencies: []
   script:
     - make lint
   tags:
     - no-gpu
 
-pytest:
+
+pytest-py310:
+  stage: test
+  image: python:3.10-slim
+  before_script:
+    - apt update
+    - apt install -y make
+    - pip install uv
+  dependencies: []
+  script:
+    - make test
+  tags:
+    - no-gpu
+    - GenuineIntel
+
+
+pytest-py311:
+  stage: test
+  image: python:3.11-slim
+  before_script:
+    - apt update
+    - apt install -y make
+    - pip install uv
+  script:
+    - make test
+  dependencies: []
+  tags:
+    - no-gpu
+    - GenuineIntel
+
+pytest-py312:
   stage: test
   script:
     - uv run pytest tests --cov=src --cov-report term-missing
     - uv run python3 -m coverage html -d coverage
     - uv run python3 -m coverage xml
   coverage: '/(?i)total.*? (100(?:\.0+)?\%|[1-9]?\d(?:\.\d+)?\%)$/'
+  dependencies: []
   artifacts:
     expose_as: coverage
     paths:
@@ -36,11 +73,11 @@ pytest:
     - no-gpu
     - GenuineIntel
 
-
 pages:
   stage: deploy
   script:
     - make document
+  dependencies: []
   artifacts:
     paths:
       - public
@@ -62,6 +99,7 @@ pages:
 deploy:wheel:tags:
   image: python:3.9-slim
   extends: .deploy:wheel
+  dependencies: []
   before_script:
     - pip install uv
     - export VERSION=$CI_COMMIT_REF_NAME

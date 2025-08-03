@@ -8,7 +8,7 @@ For more details, please refer to docs below.
 
 ## How to install
 
-You can intall dagstream by using pip.
+Dagstream supports Python 3.10 or later. You can intall dagstream by using pip.
 
 ```
 pip install dagstream
