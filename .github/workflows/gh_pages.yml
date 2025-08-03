@@ -19,9 +19,8 @@ jobs:
         run: |
           apt update -y
           apt install -y make git
-          pip install poetry
-          poetry config virtualenvs.in-project false
-          poetry install --with dev
+          pip install uv
+          make install_dev
 
       - name: build_pages
         shell: bash
@@ -29,7 +28,7 @@ jobs:
           make document
 
       - name: upload_artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: html_pages
           path: public/ # or path/to/artifact
@@ -40,7 +39,7 @@ jobs:
     steps:
 
       - name: download_artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: html_pages
           path: public/
