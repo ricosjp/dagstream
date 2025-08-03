@@ -4,13 +4,11 @@ stages:
   - deploy
 
 default:
-  image: python:3.9-slim
+  image: python:3.12-slim
   before_script:
     - apt update
     - apt install -y make
-    - pip install poetry
-    - poetry config virtualenvs.in-project false
-    - poetry install --with dev
+    - pip install uv
 
 lint:
   stage: lint
@@ -22,9 +20,9 @@ lint:
 pytest:
   stage: test
   script:
-    - poetry run pytest tests --cov=src --cov-report term-missing
-    - poetry run python3 -m coverage html -d coverage
-    - poetry run python3 -m coverage xml
+    - uv run pytest tests --cov=src --cov-report term-missing
+    - uv run python3 -m coverage html -d coverage
+    - uv run python3 -m coverage xml
   coverage: '/(?i)total.*? (100(?:\.0+)?\%|[1-9]?\d(?:\.\d+)?\%)$/'
   artifacts:
     expose_as: coverage
@@ -54,18 +52,18 @@ pages:
 .deploy:wheel:
   stage: deploy
   script:
-    - poetry version $VERSION
-    - poetry config repositories.ricos https://pypi.ritc.jp
-    - poetry build -f wheel
-    - poetry publish --username ricos --password $RICOS_PYPI_KEY -r ricos --no-ansi -n -v
-    - poetry publish --username __token__ --password $PYPI_PUBLISH_TOKEN --no-ansi -n -v
+    - uv version $VERSION
+    - uv config repositories.ricos https://pypi.ritc.jp
+    - uv build -f wheel
+    - uv publish --username ricos --password $RICOS_PYPI_KEY -r ricos --no-ansi -n -v
+    - uv publish --username __token__ --password $PYPI_PUBLISH_TOKEN --no-ansi -n -v
 
 
 deploy:wheel:tags:
   image: python:3.9-slim
   extends: .deploy:wheel
   before_script:
-    - pip install poetry
+    - pip install uv
     - export VERSION=$CI_COMMIT_REF_NAME
   only:
     - tags

@@ -1,45 +1,52 @@
-[tool.poetry]
+[project]
 name = "dagstream"
 version = "0.1.6"
 description = ""
-authors = ["sakamoto <sakamoto@ricos.co.jp>"]
+authors = [{ name = "sakamoto", email = "sakamoto@ricos.co.jp" }]
+requires-python = ">=3.9"
+readme = "README.md"
 license = "Apache-2.0"
 classifiers = []
-readme = "README.md"
-homepage = "https://github.com/ricosjp/dagstream"
-repository = "https://github.com/ricosjp/dagstream"
-documentation = "https://ricosjp.github.io/dagstream/"
-packages = [
-    {include = "dagstream", from = "src"}
+
+[project.urls]
+Homepage = "https://github.com/ricosjp/dagstream"
+Repository = "https://github.com/ricosjp/dagstream"
+Documentation = "https://ricosjp.github.io/dagstream/"
+
+[dependency-groups]
+dev = [
+    "pytest>=5.2",
+    "mypy>=1.4.1",
+    "pytest-cov>=4.1.0",
+    "sphinx-rtd-theme>=1.2.2",
+    "sphinxcontrib-mermaid>=0.9.2",
+    "mdformat>=0.7.16",
+    "ruff>=0.9.2",
 ]
-include = ["pyproject.toml"]
 
-[tool.poetry.dependencies]
-python = "^3.9"
+[tool.hatch.build.targets.sdist]
+include = [
+    "src/dagstream",
+    "pyproject.toml",
+]
 
-[tool.poetry.group.dev]
-optional = true
-[tool.poetry.group.dev.dependencies]
-pytest = "^5.2"
-mypy = "^1.4.1"
-pytest-cov = "^4.1.0"
-sphinx-rtd-theme = "^1.2.2"
-sphinxcontrib-mermaid = "^0.9.2"
-mdformat = "^0.7.16"
-ruff = "^0.9.2"
+[tool.hatch.build.targets.wheel]
+include = [
+    "src/dagstream",
+    "pyproject.toml",
+]
+
+[tool.hatch.build.targets.wheel.sources]
+"src/dagstream" = "dagstream"
 
 [build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
 [tool.pytest.ini_options]
 addopts = [
     "--import-mode=importlib",
 ]
-
-[tool.isort]
-profile = "black"
-
 
 [tool.coverage.report]
 exclude_also = [
@@ -47,7 +54,6 @@ exclude_also = [
     "@(abc\\.)?abstractmethod",
     "raise NotImplementedError"
     ]
-
 
 [tool.ruff]
 include = ["pyproject.toml", "src/**/*.py", "tests/**/*.py"]
@@ -117,7 +123,6 @@ suppress-none-returning = true
 
 [tool.ruff.lint.per-file-ignores]
 "__init__.py" = ["F401"]
-"src/phlower/_base/**/*.py" = ["ANN401"]
 
 [tool.ruff.format]
 # Like Black, use double quotes for strings.

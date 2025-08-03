@@ -1,38 +1,33 @@
 from __future__ import annotations
 
-from typing import TypeVar
-
 import pytest
 
 from dagstream import DagStream
 from dagstream.executor import StreamExecutor
 from dagstream.graph_components import IFunctionalNode
 
-T1 = TypeVar("T1")
-T2 = TypeVar("T2")
 
-
-def sample1(*args: T1, **kwards: T2) -> tuple[T1, T2]:
+def sample1[T1, T2](*args: T1, **kwards: T2) -> tuple[T1, T2]:
     return args, kwards
 
 
-def sample2(*args: T1, **kwards: T2) -> tuple[T1, T2]:
+def sample2[T1, T2](*args: T1, **kwards: T2) -> tuple[T1, T2]:
     return args, kwards
 
 
-def sample3(*args: T1, **kwards: T2) -> tuple[T1, T2]:
+def sample3[T1, T2](*args: T1, **kwards: T2) -> tuple[T1, T2]:
     return args, kwards
 
 
-def sample4(*args: T1, **kwards: T2) -> tuple[T1, T2]:
+def sample4[T1, T2](*args: T1, **kwards: T2) -> tuple[T1, T2]:
     return args, kwards
 
 
-def sample5(*args: T1, **kwards: T2) -> tuple[T1, T2]:
+def sample5[T1, T2](*args: T1, **kwards: T2) -> tuple[T1, T2]:
     return args, kwards
 
 
-def sample6(*args: T1, **kwards: T2) -> tuple[T1, T2]:
+def sample6[T1, T2](*args: T1, **kwards: T2) -> tuple[T1, T2]:
     return args, kwards
 
 

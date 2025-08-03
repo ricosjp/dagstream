@@ -85,3 +85,6 @@ dmypy.json
 
 # python-version
 .python-version
+
+# uv
+uv.lock
