@@ -1,6 +1,6 @@
 [project]
 name = "dagstream"
-version = "0.1.6"
+version = "0.1.7.dev0"
 description = ""
 authors = [{ name = "sakamoto", email = "sakamoto@ricos.co.jp" }]
 requires-python = ">=3.10"
