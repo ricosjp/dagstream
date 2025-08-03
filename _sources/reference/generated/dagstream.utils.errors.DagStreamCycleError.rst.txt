@@ -1,0 +1,6 @@
+﻿dagstream.utils.errors.DagStreamCycleError
+==========================================
+
+.. currentmodule:: dagstream.utils.errors
+
+.. autoexception:: DagStreamCycleError

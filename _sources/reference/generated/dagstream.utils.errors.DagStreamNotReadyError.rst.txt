@@ -1,0 +1,6 @@
+﻿dagstream.utils.errors.DagStreamNotReadyError
+=============================================
+
+.. currentmodule:: dagstream.utils.errors
+
+.. autoexception:: DagStreamNotReadyError

@@ -1,0 +1,210 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DagStream &mdash; dagstream 0.1.7.dev0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=fc704f74"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script type="module" src="https://cdn.jsdelivr.net/npm/mermaid@11.2.0/dist/mermaid.esm.min.mjs"></script>
+      <script type="module" src="https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.1.4/dist/mermaid-layout-elk.esm.min.mjs"></script>
+      <script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.2.0/dist/mermaid.esm.min.mjs";import elkLayouts from "https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.1.4/dist/mermaid-layout-elk.esm.min.mjs";mermaid.registerLayoutLoaders(elkLayouts);mermaid.initialize({startOnLoad:false});</script>
+      <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+      <script type="module">
+import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.2.0/dist/mermaid.esm.min.mjs";
+window.addEventListener("load", () => mermaid.run());
+</script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Example" href="examples.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="#" class="icon icon-home">
+            dagstream
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reference/index.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">dagstream</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="#" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">DagStream</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="dagstream">
+<h1>DagStream<a class="headerlink" href="#dagstream" title="Link to this heading">¶</a></h1>
+<p>DagStream is the Python package in order to manage relationship between functions,
+especially for data-preprocessing process for machine learning applications.</p>
+<section id="key-features">
+<h2>Key Features<a class="headerlink" href="#key-features" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>Simple method to define dag relationship</p></li>
+<li><p>Quick Visualization by mermaid</p></li>
+</ul>
+<section id="definition-of-dag">
+<h3>Definition of Dag<a class="headerlink" href="#definition-of-dag" title="Link to this heading">¶</a></h3>
+<p>DagStream class convert your functions into dag nodes.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">dagstream</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">funcA</span><span class="p">():</span>
+   <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;funcA&quot;</span><span class="p">)</span>
+   <span class="k">return</span> <span class="mi">10</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">funcB</span><span class="p">(</span><span class="n">val_from_A</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+   <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;funcB, received </span><span class="si">{</span><span class="n">val_from_A</span><span class="si">}</span><span class="s2"> from A&quot;</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">funcC</span><span class="p">(</span><span class="n">val_from_A</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+   <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;funcC, received </span><span class="si">{</span><span class="n">val_from_A</span><span class="si">}</span><span class="s2"> from A&quot;</span><span class="p">)</span>
+   <span class="k">return</span> <span class="mi">20</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">funcD</span><span class="p">(</span><span class="n">val_from_C</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+   <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;funcD, received </span><span class="si">{</span><span class="n">val_from_C</span><span class="si">}</span><span class="s2"> from C&quot;</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">funcE</span><span class="p">():</span>
+   <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;funcE&quot;</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">funcF</span><span class="p">():</span>
+   <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;funcF&quot;</span><span class="p">)</span>
+
+
+<span class="n">stream</span> <span class="o">=</span> <span class="n">dagstream</span><span class="o">.</span><span class="n">DagStream</span><span class="p">()</span>
+<span class="c1"># convert to functional nodes</span>
+<span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">C</span><span class="p">,</span> <span class="n">D</span><span class="p">,</span> <span class="n">E</span><span class="p">,</span> <span class="n">F</span> <span class="o">=</span> <span class="n">stream</span><span class="o">.</span><span class="n">emplace</span><span class="p">(</span><span class="n">funcA</span><span class="p">,</span> <span class="n">funcB</span><span class="p">,</span> <span class="n">funcC</span><span class="p">,</span> <span class="n">funcD</span><span class="p">,</span> <span class="n">funcE</span><span class="p">,</span> <span class="n">funcF</span><span class="p">)</span>
+
+<span class="c1"># define relationship betweeen functional nodes</span>
+
+<span class="c1"># A executes before B and C</span>
+<span class="c1"># output of A passed to B and C</span>
+<span class="n">A</span><span class="o">.</span><span class="n">precede</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">C</span><span class="p">,</span> <span class="n">pipe</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># E executes after B, C and D</span>
+<span class="n">E</span><span class="o">.</span><span class="n">succeed</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">C</span><span class="p">,</span> <span class="n">D</span><span class="p">)</span>
+
+<span class="c1"># D executes after C</span>
+<span class="c1"># D receives output of C</span>
+<span class="n">D</span><span class="o">.</span><span class="n">succeed</span><span class="p">(</span><span class="n">C</span><span class="p">,</span> <span class="n">pipe</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">F</span><span class="o">.</span><span class="n">succeed</span><span class="p">(</span><span class="n">E</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Relationship between functions are like below.</p>
+<pre  class="mermaid">
+        stateDiagram
+    direction LR
+    state &quot;funcA&quot; as state_0
+    state &quot;funcB&quot; as state_1
+    state &quot;funcC&quot; as state_2
+    state &quot;funcD&quot; as state_3
+    state &quot;funcE&quot; as state_4
+    state &quot;funcF&quot; as state_5
+    [*] --&gt; state_0
+    state_0 --&gt; state_1: Pipe
+    state_0 --&gt; state_2: Pipe
+    state_1 --&gt; state_4
+    state_2 --&gt; state_4
+    state_2 --&gt; state_3: Pipe
+    state_3 --&gt; state_4
+    state_4 --&gt; state_5
+    state_5 --&gt; [*]
+    </pre></section>
+</section>
+<section id="license">
+<h2>License<a class="headerlink" href="#license" title="Link to this heading">¶</a></h2>
+<p>the Apache License, Version 2.0 (the “License”)</p>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reference/index.html">API Reference</a></li>
+</ul>
+</div>
+</section>
+</section>
+<section id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Link to this heading">¶</a></h1>
+<ul class="simple">
+<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
+<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
+<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
+</ul>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="examples.html" class="btn btn-neutral float-right" title="Example" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, sakamoto.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
